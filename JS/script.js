@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
 const fragment = document.createDocumentFragment();
 const sectionCards = document.querySelector('#cards');
 let botonCard;
+let arrayBack = [];
 
 
 //EVENTOS
@@ -41,16 +42,9 @@ const accesoAPILista2 = async (link) => {
       console.log(respuesta2OK);
       let datosLista = respuesta2OK.body;
       console.log(datosLista);
+      sectionCards.innerHTML = '';
       pintarCardsTematicas(datosLista);
 
-
-      /*Los libros deben estar organizados según el orden de la lista oficial
-Incluir
-Carátula del libro
-Cantidad de semanas que lleva en la lista
-Descripción
-Titulo y la posición que ocupa en la lista ( #1 titulo.... #2 titulo....)
-Link para poder comprar el libro en amazon (debe abrirse en otra pestaña)*/
 
     }
 
@@ -64,6 +58,8 @@ Link para poder comprar el libro en amazon (debe abrirse en otra pestaña)*/
 const pintarCards = (datos) => {
   datos.forEach(({ display_name: nombre, oldest_published_date: masAntiguo,
     newest_published_date: masNuevo, updated, list_name_encoded: link }) => {
+    arrayBack.push({ display_name: nombre, oldest_published_date: masAntiguo,
+      newest_published_date: masNuevo, updated, list_name_encoded: link });
     const contenedorCard = document.createElement("DIV");
     contenedorCard.classList = "contenedorCard"
     const h3Card = document.createElement("H3");
@@ -76,33 +72,84 @@ const pintarCards = (datos) => {
     const datoUpdated = document.createElement("P");
     datoUpdated.textContent = `Updated: ${updated}`;
     botonCard = document.createElement("BUTTON");
-    botonCard.classList.add = link;
     botonCard.textContent = "READ MORE";
     botonCard.dataset.link = link;
-    const enlaceBoton = document.createElement("A");
-    enlaceBoton.href = `./detalleLista.html`;
-
-    enlaceBoton.append(botonCard);
-    fragment.append(h3Card, hrCard, datoOldest, datoNewest, datoUpdated, enlaceBoton)
+   
+    fragment.append(h3Card, hrCard, datoOldest, datoNewest, datoUpdated, botonCard)
     contenedorCard.append(fragment);
     sectionCards.append(contenedorCard);
 
   })
 };
 
+//Función para pintar las cards de cada temática
+const pintarCardsTematicas = (datos) => {
+  window.scrollTo(0,0);
+  const botonBack = document.createElement('BUTTON');
+  botonBack.dataset.classList = "botonBack";
+  botonBack.textContent = "BACK TO INDEX";
+  sectionCards.append(botonBack);
+
+  datos.forEach(({list_name, rank, weeks_on_list:semanas, book_details:detalles}) => {
+
+    const titulo = detalles[0].title;
+    const contenedorLibro = document.createElement("DIV");
+    const tituloLista = document.createElement("H3");
+    tituloLista.textContent = list_name;
+    
+    contenedorLibro.classList = "contenedorLibro";
+    const h4Libro = document.createElement("H4");
+    h4Libro.innerHTML = `#${rank} ${titulo}`;
+
+    const imgLibro = document.createElement("IMG");
+    imgLibro.src = detalles[0].book_image;
+    console.log(imgLibro.src);
+    imgLibro.alt = "caratula libro";
+    
+    const semanasEnLista = document.createElement("P");
+    semanasEnLista.textContent = `Weeks on list: ${semanas}`;
+
+    const description = document.createElement("P");
+    description.textContent = `${detalles[0].description}`;
+
+    const enlaceBoton = document.createElement("A");
+    enlaceBoton.href = `${detalles[0].amazon_product_url}`;
+    enlaceBoton.target = "_blank";
+    const botonComprar = document.createElement("BUTTON");
+    botonComprar.textContent = "BUY AT AMAZON";
+    
+
+    enlaceBoton.append(botonComprar);
+    fragment.append(tituloLista, h4Libro, imgLibro, semanasEnLista, description, enlaceBoton)
+    contenedorLibro.append(fragment);
+    sectionCards.append(contenedorLibro);
+
+          /*Los libros deben estar organizados según el orden de la lista oficial
+Incluir
+Carátula del libro
+Cantidad de semanas que lleva en la lista
+Descripción
+Titulo y la posición que ocupa en la lista ( #1 titulo.... #2 titulo....)
+Link para poder comprar el libro en amazon (debe abrirse en otra pestaña)*/
+
+
+  })
+};
 
 
 //Llamadas a funciones
 accesoAPI();
 
 sectionCards.addEventListener('click', (event) => {
-  if (event.target.tagName === 'BUTTON') {
+  if (event.target.tagName === 'BUTTON' && event.target.dataset.link) {
     const linkURL = event.target.dataset.link;
     console.log(`Botón pulsado: ${linkURL}`);
     accesoAPILista2(linkURL);
+  } else if (event.target.tagName === 'BUTTON' && event.target.dataset.classList === 'botonBack') {
+    sectionCards.innerHTML = '';
+      pintarCards(arrayBack);
   }
 });
 
-//indexOF para acceder a la ULR de la API del elemento en el que se ha pulsado el boton de Read MORE
 
 });//LOADED
