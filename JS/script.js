@@ -90,17 +90,18 @@ const pintarCards = (datos) => {
 //Función para pintar las cards de cada temática
 const pintarCardsTematicas = (datos) => {
   window.scrollTo(0,0);
+  const sectionBoton = document.querySelector('#sectionBoton');
   const botonBack = document.createElement('BUTTON');
   botonBack.dataset.classList = "botonBack";
   botonBack.textContent = "BACK TO INDEX";
-  sectionCards.append(botonBack);
+  sectionBoton.append(botonBack);
 
   datos.forEach(({list_name, rank, weeks_on_list:semanas, book_details:detalles}) => {
 
     const titulo = detalles[0].title;
     const contenedorLibro = document.createElement("DIV");
-    const tituloLista = document.createElement("H3");
-    tituloLista.textContent = list_name;
+    //const tituloLista = document.createElement("H3");
+    //tituloLista.textContent = list_name;
     
     contenedorLibro.classList = "contenedorLibro";
     const h4Libro = document.createElement("H4");
@@ -124,7 +125,7 @@ const pintarCardsTematicas = (datos) => {
     
 
     enlaceBoton.append(botonComprar);
-    fragment.append(tituloLista, h4Libro, imgLibro, semanasEnLista, description, enlaceBoton)
+    fragment.append(h4Libro, imgLibro, semanasEnLista, description, enlaceBoton)
     contenedorLibro.append(fragment);
     sectionCards.append(contenedorLibro);
 

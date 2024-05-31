@@ -1,3 +1,8 @@
+* {
+    margin:0;
+    padding: 0;
+
+}
 header h2 {
     text-align: center;
 }
@@ -6,6 +11,29 @@ header img {
     align-self: center;
     width: 100%;
     height: 250px;
+}
+
+body {
+    display: block;
+}
+
+#cards {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    gap: 1rem;
+    border: 2px solid salmon;
+}
+
+.contenedorLibro {
+    display: block;
+    border: 2px solid green;
+    align-items: center;
+}
+
+.contenedorLibro img {
+    width: 30%;
+    align-self: center;
 }
 
 section .spinner {
@@ -31,3 +59,11 @@ section .loader {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+
+  @media (min-width: 600px) {
+
+    #cards {
+        grid-template-columns: repeat(4, 1fr); }
+
+    }
+
