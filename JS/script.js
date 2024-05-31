@@ -13,6 +13,7 @@ let arrayBack = [];
 //FUNCIONES
 //Función de acceso inicial a la API
 const accesoAPI = async () => {
+  mostrarSpinner();
   try {
     const respuesta = await fetch('https://api.nytimes.com/svc/books/lists/names.json?api-key=AxAIDguQa4ASm7ICC6g7eMqm1XG0WPLx', {
       method: 'GET',
@@ -23,15 +24,19 @@ const accesoAPI = async () => {
       let respuestaOK = await respuesta.json();
       let listasAPintar = respuestaOK.body.results;
       console.log(respuestaOK);
+    
       pintarCards(listasAPintar);
+      ocultarSpinner();
     }
   } catch (error) {
+    ocultarSpinner();
     throw error;
   }
 };
 
 //Función de acceso a la API para 2ª lista
 const accesoAPILista2 = async (link) => {
+  mostrarSpinner();
   try {
     const respuesta2 = await fetch(`https://api.nytimes.com/svc/books/lists/${link}.json?api-key=AxAIDguQa4ASm7ICC6g7eMqm1XG0WPLx`, {
       method: 'GET'});
@@ -44,11 +49,11 @@ const accesoAPILista2 = async (link) => {
       console.log(datosLista);
       sectionCards.innerHTML = '';
       pintarCardsTematicas(datosLista);
-
-
+      ocultarSpinner();
     }
 
   } catch (error) {
+    ocultarSpinner();
     throw error;
   }
 };
@@ -103,7 +108,6 @@ const pintarCardsTematicas = (datos) => {
 
     const imgLibro = document.createElement("IMG");
     imgLibro.src = detalles[0].book_image;
-    console.log(imgLibro.src);
     imgLibro.alt = "caratula libro";
     
     const semanasEnLista = document.createElement("P");
@@ -124,26 +128,30 @@ const pintarCardsTematicas = (datos) => {
     contenedorLibro.append(fragment);
     sectionCards.append(contenedorLibro);
 
-          /*Los libros deben estar organizados según el orden de la lista oficial
-Incluir
-Carátula del libro
-Cantidad de semanas que lleva en la lista
-Descripción
-Titulo y la posición que ocupa en la lista ( #1 titulo.... #2 titulo....)
-Link para poder comprar el libro en amazon (debe abrirse en otra pestaña)*/
-
-
   })
 };
 
 
+//Funciones para gestionar el spinner de carga
+const mostrarSpinner = () => {
+  console.log("Cargando spinner")
+  spinner.style.display = 'block';
+};
+
+// Función para ocultar el spinner
+const ocultarSpinner = () => {
+  console.log("Quitando spinner")
+
+  spinner.style.display = 'none';
+};
+
 //Llamadas a funciones
 accesoAPI();
 
+//EVENTOS
 sectionCards.addEventListener('click', (event) => {
   if (event.target.tagName === 'BUTTON' && event.target.dataset.link) {
     const linkURL = event.target.dataset.link;
-    console.log(`Botón pulsado: ${linkURL}`);
     accesoAPILista2(linkURL);
   } else if (event.target.tagName === 'BUTTON' && event.target.dataset.classList === 'botonBack') {
     sectionCards.innerHTML = '';
