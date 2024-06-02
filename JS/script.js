@@ -6,10 +6,6 @@ const sectionCards = document.querySelector('#cards');
 let botonCard;
 let arrayBack = [];
 
-
-//EVENTOS
-
-
 //FUNCIONES
 //Función de acceso inicial a la API
 const accesoAPI = async () => {
@@ -61,10 +57,10 @@ const accesoAPILista2 = async (link) => {
 
 //Función para pintar 
 const pintarCards = (datos) => {
+  arrayBack = datos;
   datos.forEach(({ display_name: nombre, oldest_published_date: masAntiguo,
     newest_published_date: masNuevo, updated, list_name_encoded: link }) => {
-    arrayBack.push({ display_name: nombre, oldest_published_date: masAntiguo,
-      newest_published_date: masNuevo, updated, list_name_encoded: link });
+ 
     const contenedorCard = document.createElement("DIV");
     contenedorCard.classList = "contenedorCard"
     const h3Card = document.createElement("H3");
@@ -90,18 +86,20 @@ const pintarCards = (datos) => {
 //Función para pintar las cards de cada temática
 const pintarCardsTematicas = (datos) => {
   window.scrollTo(0,0);
+  const sectionTituloLista = document.querySelector('#sectionTituloLista');
   const sectionBoton = document.querySelector('#sectionBoton');
   const botonBack = document.createElement('BUTTON');
-  botonBack.dataset.classList = "botonBack";
+  botonBack.classList = "botonBack";
   botonBack.textContent = "BACK TO INDEX";
   sectionBoton.append(botonBack);
+  
 
   datos.forEach(({list_name, rank, weeks_on_list:semanas, book_details:detalles}) => {
-
+    sectionTituloLista.innerHTML = '';
     const titulo = detalles[0].title;
     const contenedorLibro = document.createElement("DIV");
-    //const tituloLista = document.createElement("H3");
-    //tituloLista.textContent = list_name;
+    const tituloLista = document.createElement("H3");
+    tituloLista.textContent = list_name;
     
     contenedorLibro.classList = "contenedorLibro";
     const h4Libro = document.createElement("H4");
@@ -109,6 +107,7 @@ const pintarCardsTematicas = (datos) => {
 
     const imgLibro = document.createElement("IMG");
     imgLibro.src = detalles[0].book_image;
+    imgLibro.classList = "contenedor-imagen";
     imgLibro.alt = "caratula libro";
     
     const semanasEnLista = document.createElement("P");
@@ -128,8 +127,9 @@ const pintarCardsTematicas = (datos) => {
     fragment.append(h4Libro, imgLibro, semanasEnLista, description, enlaceBoton)
     contenedorLibro.append(fragment);
     sectionCards.append(contenedorLibro);
-
+    sectionTituloLista.append(tituloLista);
   })
+
 };
 
 
@@ -152,11 +152,17 @@ accesoAPI();
 //EVENTOS
 sectionCards.addEventListener('click', (event) => {
   if (event.target.tagName === 'BUTTON' && event.target.dataset.link) {
+    sectionBoton.innerHTML = '';
     const linkURL = event.target.dataset.link;
     accesoAPILista2(linkURL);
-  } else if (event.target.tagName === 'BUTTON' && event.target.dataset.classList === 'botonBack') {
+}
+});
+
+sectionBoton.addEventListener('click', (event) => {
+  if (event.target.classList.contains('botonBack')) {
     sectionCards.innerHTML = '';
-      pintarCards(arrayBack);
+    sectionTituloLista.innerHTML = '';
+    pintarCards(arrayBack);
   }
 });
 
