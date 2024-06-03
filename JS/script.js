@@ -3,8 +3,45 @@ document.addEventListener('DOMContentLoaded', () => {
 //VARIABLES
 const fragment = document.createDocumentFragment();
 const sectionCards = document.querySelector('#cards');
+const formFilter = document.querySelector('.selects');
+
+let datosFiltrados = [];
 let botonCard;
 let arrayBack = [];
+
+//EVENTOS
+//Evento para acceder al género de los libros
+sectionCards.addEventListener('click', (event) => {
+  if (event.target.tagName === 'BUTTON' && event.target.dataset.link) {
+    sectionBoton.innerHTML = '';
+    const linkURL = event.target.dataset.link;
+    accesoAPILista2(linkURL);
+}
+});
+
+//Evento para filtrar por libros que se actualizan semanal o mensualmente, o volver a todos
+formFilter.addEventListener('change', (evento) => {
+  if (evento.target.value === 'weekly') {
+    sectionCards.innerHTML = '';
+    filtrarCards('weekly');
+  } else if (evento.target.value === 'monthly') {
+    sectionCards.innerHTML = '';
+    filtrarCards('monthly');
+  } else {
+    sectionCards.innerHTML = '';
+    pintarCards(datosFiltrados);
+  }
+});
+
+//Evento para volver al Index
+sectionBoton.addEventListener('click', (event) => {
+  if (event.target.classList.contains('botonBack')) {
+    sectionCards.innerHTML = '';
+    sectionTituloLista.innerHTML = '';
+    pintarCards(arrayBack);
+    sectionBoton.innerHTML = '';
+  }
+});
 
 //FUNCIONES
 //Función de acceso inicial a la API
@@ -19,6 +56,8 @@ const accesoAPI = async () => {
     } else {
       let respuestaOK = await respuesta.json();
       let listasAPintar = respuestaOK.body.results;
+      arrayBack = listasAPintar;
+      datosFiltrados = [...listasAPintar];
       console.log(respuestaOK);
     
       pintarCards(listasAPintar);
@@ -58,6 +97,7 @@ const accesoAPILista2 = async (link) => {
 //Función para pintar 
 const pintarCards = (datos) => {
   arrayBack = datos;
+
   datos.forEach(({ display_name: nombre, oldest_published_date: masAntiguo,
     newest_published_date: masNuevo, updated, list_name_encoded: link }) => {
  
@@ -71,6 +111,7 @@ const pintarCards = (datos) => {
     const datoNewest = document.createElement("P");
     datoNewest.textContent = `Newest: ${masNuevo}`;
     const datoUpdated = document.createElement("P");
+    datoUpdated.classList = 'filterSelect';
     datoUpdated.textContent = `Updated: ${updated}`;
     botonCard = document.createElement("BUTTON");
     botonCard.textContent = "READ MORE";
@@ -132,39 +173,27 @@ const pintarCardsTematicas = (datos) => {
 
 };
 
+//Función para filtrar por categorías actualizadas weekly o monthly
+const filtrarCards = (filtro) => {
+  sectionCards.innerHTML = '';
+  let filtroAPintar = datosFiltrados.filter(card => card.updated.toLowerCase() === filtro);
+  pintarCards(filtroAPintar);
+};
 
 //Funciones para gestionar el spinner de carga
 const mostrarSpinner = () => {
-  console.log("Cargando spinner")
   spinner.style.display = 'block';
 };
 
 // Función para ocultar el spinner
 const ocultarSpinner = () => {
-  console.log("Quitando spinner")
-
   spinner.style.display = 'none';
 };
 
 //Llamadas a funciones
 accesoAPI();
 
-//EVENTOS
-sectionCards.addEventListener('click', (event) => {
-  if (event.target.tagName === 'BUTTON' && event.target.dataset.link) {
-    sectionBoton.innerHTML = '';
-    const linkURL = event.target.dataset.link;
-    accesoAPILista2(linkURL);
-}
-});
 
-sectionBoton.addEventListener('click', (event) => {
-  if (event.target.classList.contains('botonBack')) {
-    sectionCards.innerHTML = '';
-    sectionTituloLista.innerHTML = '';
-    pintarCards(arrayBack);
-  }
-});
 
 
 });//LOADED

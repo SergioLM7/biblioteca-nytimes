@@ -194,10 +194,11 @@ header {
     align-items: center;
   }
 
-.contenedorLibro img {
-    max-width: 100%;
+  .contenedorCard img, .contenedorLibro img {
+    width: 100%;
     height: auto;
-}
+    max-width: 150px; /* Ajusta el tamaño máximo según tus necesidades */
+  }
 
 .contenedorLibro p {
     margin: 0.5rem 0;
