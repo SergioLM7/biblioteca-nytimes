@@ -1,0 +1,218 @@
+@font-face {
+    font-family: 'nytimesStyle';
+    src: url('engraversenglihs.otf');
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'nytimesStyle';
+}
+
+header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 16px;
+    text-align: center;
+  }
+  
+  header img {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    max-height: 250px;
+  }
+  
+  header h2 {
+    margin: 1rem 0;
+    font-family: 'nytimesStyle';
+    font-size: 2rem;
+  }
+
+/* Spinner */
+.spinner {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+}
+
+.loader {
+    border: 16px solid #f3f3f3;
+    border-top: 16px solid #3498db;
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Cards */ 
+#cards {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+}
+
+.contenedorCard {
+    background-color: #f9f9f9;
+    border: 1px solid #c76e2e;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.contenedorCard h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+}
+
+.contenedorCard hr {
+    margin: 0.5rem 0;
+    color: #c76e2e;
+}
+
+.contenedorCard p {
+    margin: 0.5rem 0;
+    color: #c76e2e;
+}
+
+.contenedorCard button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #c76e2e;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.contenedorCard button:hover {
+    background-color: #dd762c;
+}
+
+/* Responsive adjustments */
+@media (min-width: 600px) {
+
+    #cards {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+}
+
+@media (min-width: 768px) {
+    #cards {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+
+    .contenedorCard {
+        flex: 0 1 calc(50% - 2rem);
+        margin: 1rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .contenedorCard {
+        flex: 0 1 calc(33.333% - 2rem);
+    }
+}
+
+/* Sección del botón de retroceso */
+#sectionBoton {
+    margin: 1rem 0;
+    text-align: center;
+}
+
+#sectionBoton button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #ec870b;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#sectionBoton button:hover {
+    background-color: #dd762c;
+}
+
+/* Estilo de la sección del título de la lista */
+#sectionTituloLista {
+    margin: 1rem 0;
+    text-align: center;
+    font-size: 2rem;
+}
+
+.contenedorLibro {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 2px 4px #dd762c;
+    text-align: center;
+}
+
+.contenedorLibro h4 {
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+}
+
+.contendor-imagen {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+.contenedorLibro img {
+    max-width: 100%;
+    height: auto;
+}
+
+.contenedorLibro p {
+    margin: 0.5rem 0;
+}
+
+.contenedorLibro a button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #2ecc71;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.contenedorLibro a button:hover {
+    background-color: #27ae60;
+}
