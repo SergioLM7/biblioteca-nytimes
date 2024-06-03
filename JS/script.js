@@ -61,7 +61,7 @@ const pintarCards = (datos) => {
   datos.forEach(({ display_name: nombre, oldest_published_date: masAntiguo,
     newest_published_date: masNuevo, updated, list_name_encoded: link }) => {
  
-    const contenedorCard = document.createElement("DIV");
+    const contenedorCard = document.createElement("ARTICLE");
     contenedorCard.classList = "contenedorCard"
     const h3Card = document.createElement("H3");
     h3Card.innerHTML = nombre;
@@ -97,7 +97,7 @@ const pintarCardsTematicas = (datos) => {
   datos.forEach(({list_name, rank, weeks_on_list:semanas, book_details:detalles}) => {
     sectionTituloLista.innerHTML = '';
     const titulo = detalles[0].title;
-    const contenedorLibro = document.createElement("DIV");
+    const contenedorLibro = document.createElement("ARTICLE");
     const tituloLista = document.createElement("H3");
     tituloLista.textContent = list_name;
     
