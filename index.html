@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="CSS/style.css">
     <title>La biblioteca del NY Times</title>
 </head>
+
 <body>
     <header>
         <h2>Los Best Selleres del NY Times</h2>
@@ -16,33 +18,36 @@
             <div class="loader"></div>
         </section>
         <section id="filters">
-            <form class="selects">
+            <form class="formFilters">
                 <label for="filter">Filter by update:</label>
                 <select id="filter">
                     <option value="all">All</option>
                     <option value="weekly">Weekly</option>
                     <option value="monthly">Monthly</option>
-                  </select>
-            </form>
-            <form class="selectsCategories" id="selectCategories">
+                </select>
+                <label for="filterAToZ">Filter A to Z:</label>
+                <select id="filterAToZ">
+                    <option value="sinFiltro"></option>
+                    <option value="aToz">A to Z</option>
+                    <option value="zToa">Z to A</option>
+                </select>
                 <label for="filterCategory">Filter by category:</label>
                 <select id="filterCategory" multiple>
                     <option value="Todas" id="todas" name="todas">Todas</option>
-                    
-                  </select>
-                  <button class="buttonFilter" form="selectCategories" id="botonFilter">Filter</button>
+                </select>
+                <button class="buttonFilter" form="formFilters" id="botonFilter">Filter</button>
             </form>
-
         </section>
 
         <section id="sectionBoton">
         </section>
         <section id="sectionTituloLista">
         </section>
-        <section id ="cards">
-        
+        <section id="cards">
+
         </section>
     </main>
     <script src="JS/script.js"></script>
 </body>
+
 </html>

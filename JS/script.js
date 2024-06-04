@@ -4,12 +4,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const fragment = document.createDocumentFragment();
   const sectionCards = document.querySelector('#cards');
   const sectionFilters = document.querySelector('#filters')
-  const formFilter = document.querySelector('.selects');
+  const selectFilter = document.querySelector('#filter');
   const selectFilterCategories = document.querySelector('#filterCategory');
+  const selectAToZ = document.querySelector('#filterAToZ');
   const botonFilterCategories = document.querySelector('.buttonFilter');
 
 
-  let datosFiltrados = [];
+  //let datosFiltrados = [];
   let botonCard;
   let arrayBack = JSON.parse(localStorage.getItem('arrayBack')) || [];
   let arrayFilterCategories = [];
@@ -25,8 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  //Evento para filtrar por libros que se actualizan semanal o mensualmente, o volver a todos
-  formFilter.addEventListener('change', (evento) => {
+  //Evento para filtrar por categorías que se actualizan semanal o mensualmente (con opción de
+  //quitar el filtro y mostrarlos todos)
+  selectFilter.addEventListener('change', (evento) => {
     if (evento.target.value === 'weekly') {
       cleanDOM(sectionCards);
       filtrarCards('weekly');
@@ -34,12 +36,23 @@ document.addEventListener('DOMContentLoaded', () => {
       cleanDOM(sectionCards);
       filtrarCards('monthly');
     } else {
-      sectionCards.innerHTML = '';
+      cleanDOM(sectionCards);
       pintarCards(arrayBack);
+      resetSelects();
     }
   });
 
-  //Evento para filtrar por géneros de libros
+  //Evento para filtrar por orden alfabético y a la inversa las listas
+  selectAToZ.addEventListener('change', (evento) => {
+    if (evento.target.value === 'aToz') {
+      filterAlphabetical();
+    } else if (evento.target.value === 'zToa') {
+      inverseFilterAlphabetical();
+    }
+  });
+
+
+  //Evento para filtrar por los géneros de las listas
   botonFilterCategories.addEventListener('click', (evento) => {
     evento.preventDefault();
     let optionsSelected = selectFilterCategories.selectedOptions;
@@ -49,18 +62,16 @@ document.addEventListener('DOMContentLoaded', () => {
       arraySelectedOptions.push(optionsSelected[i].value);
     }
     console.log(arraySelectedOptions);
-    if(arraySelectedOptions.includes('Todas')) {
+    if (arraySelectedOptions.includes('Todas')) {
       cleanDOM(sectionCards);
       pintarCards(arrayBack);
     } else {
-    let arrayFiltrado = arrayBack.filter(elemento => arraySelectedOptions.includes(elemento.list_name));
-    cleanDOM(sectionCards);
-    pintarCards(arrayFiltrado);
-    console.log(arrayFiltrado)
+      let arrayFiltrado = arrayBack.filter(elemento => arraySelectedOptions.includes(elemento.list_name));
+      cleanDOM(sectionCards);
+      pintarCards(arrayFiltrado);
+      console.log(arrayFiltrado)
     }
-
   });
-
 
 
 
@@ -87,9 +98,9 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         let respuestaOK = await respuesta.json();
         let listasAPintar = respuestaOK.body.results;
+       // datosFiltrados = [...listasAPintar];
         arrayBack = listasAPintar;
         localStorage.setItem('arrayBack', JSON.stringify(arrayBack));
-        datosFiltrados = [...arrayBack];
 
         pintarCards(listasAPintar);
         ocultarSpinner();
@@ -214,16 +225,60 @@ document.addEventListener('DOMContentLoaded', () => {
     element.innerHTML = '';
   };
 
+  //Función reset selects
+  const resetSelects = () => {
+    selectFilterCategories.value = 'todas';
+    selectFilter.value = 'all';
+    selectAToZ.value = 'sinFiltro';
+
+  };
+
   //Función para filtrar por categorías actualizadas weekly o monthly
   const filtrarCards = (filtro) => {
-    let filtroAPintar = datosFiltrados.filter(card => card.updated.toLowerCase() === filtro);
+    let filtroAPintar = [...arrayBack].filter(card => card.updated.toLowerCase() === filtro);
     console.log(filtroAPintar)
     pintarCards(filtroAPintar);
+    resetSelects();
+  };
+
+  //Función para filtrar las categorías por orden alfabético
+  const filterAlphabetical = () => {
+    let alphabeticalFilter = [...arrayBack].sort((a, b) => {
+      if (a.list_name < b.list_name) {
+        return -1;
+      }
+      if (a.list_name > b.list_name) {
+        return 1;
+      }
+      return 0;
+    });
+    console.log(alphabeticalFilter)
+    cleanDOM(sectionCards);
+    pintarCards(alphabeticalFilter);
+    resetSelects();
+  };
+
+  //Función para filtrar las categorías por el orden alfabético inverso
+  const inverseFilterAlphabetical = () => {
+    let inverseAlphabeticalFilter = [...arrayBack].sort((a, b) => {
+      if (a.list_name > b.list_name) {
+        return -1;
+      }
+      if (a.list_name < b.list_name) {
+        return 1;
+      }
+      return 0;
+    });
+    console.log(inverseAlphabeticalFilter)
+    cleanDOM(sectionCards);
+    console.log(arrayBack)
+    pintarCards(inverseAlphabeticalFilter);
+    resetSelects();
   };
 
   //Función para filtrar por géneros de libros(filtra la segunda llamada a la API)
   const filtrarLibros = (filtro2) => {
-    let librosPorGenero = datosFiltrados.filter(card => card.nombre === filtro2);
+    let librosPorGenero = arrayBack.filter(card => card.nombre === filtro2);
     console.log(librosPorGenero);
 
   };
@@ -244,7 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
     sectionFilters.style.display = 'flex';
   } else {
     sectionFilters.style.display = 'flex';
-    datosFiltrados = [...arrayBack];
+    //datosFiltrados = [...arrayBack];
     pintarCards(arrayBack);
   };
 
