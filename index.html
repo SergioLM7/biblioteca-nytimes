@@ -18,7 +18,6 @@
             <div class="loader"></div>
         </section>
         <section id="filters">
-            <form class="formFilters">
                 <label for="filter">Filter by update:</label>
                 <select id="filter">
                     <option value="all">All</option>
@@ -48,10 +47,8 @@
                     <option value="Todas" id="todas" name="todas">All</option>
                 </select>
                 <button class="buttonFilter" form="formFilters" id="botonFilter">Filter</button>
-            </form>
         </section>
         <section id="booksFilters">
-            <form class="formBooksFilters">
                 <label for="bookFilterAToZ">Filter books (A to Z):</label>
                 <select id="bookFilterAToZ">
                     <option value="bookNoFilter">--Select--</option>
@@ -65,12 +62,12 @@
                     <option value="zToa">Z to A</option>
                 </select>
                 <label for="tituloLibro"></label>
-                <input type="text" id="tituloLibro" name="tituloLibro" placeholder="find by title"/>
+                <input type="text" id="tituloLibro" name="tituloLibro" placeholder="find by title" maxlength="6"/>
                 <button class="buttonTituloFilter" id="botonTituloFilter" name="botonTituloFilter">Find the book</button>
                 <label for="autorLibro"></label>
-                <input type="text" id="autorLibro" name="autorLibro" placeholder="find by author"/>
+                <input type="text" id="autorLibro" name="autorLibro" placeholder="find by author" maxlength="6"/>
                 <button class="buttonAuthorFilter" id="botonAuthorFilter" name="botonAuthorFilter">Find by author</button>
-            </form>
+                <button class="clearButton" id="clear" name="clear">Clear</button>
         </section>
         <section id="sectionBoton">
         </section>

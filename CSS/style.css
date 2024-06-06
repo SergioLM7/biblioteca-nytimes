@@ -60,18 +60,41 @@ header {
 }
 
 /*Filters*/
-#filters {
-    display: none;
-    flex-direction: row;
-    justify-content: space-between;
-    margin: 0 3rem 0 3rem;
+#filters, #booksFilters {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  
     gap: 10px;
-    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    padding: 1rem 0;
+}
+
+#filters label, #booksFilters label {
     font-weight: bold;
 }
 
-.selects {
-    margin-top: 3rem;
+label, select, input, button {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    max-width: 300px;
+    width: 100%;
+}
+
+.buttonFilter, .buttonTituloFilter, .buttonAuthorFilter {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #ec870b;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.buttonFilter:hover, .buttonTituloFilter:hover, .buttonAuthorFilter:hover {
+    background-color: #dd762c;
 }
 
 /* Cards */ 
@@ -104,12 +127,12 @@ header {
     color: #c76e2e;
 }
 
-.contenedorCard p {
+.contenedorCard p, .contenedorLibro p {
     margin: 0.5rem 0;
     color: #c76e2e;
 }
 
-.contenedorCard button {
+.contenedorCard button, .contenedorLibro a button {
     padding: 0.5rem 1rem;
     border: none;
     border-radius: 4px;
@@ -119,9 +142,25 @@ header {
     transition: background-color 0.3s;
 }
 
-.contenedorCard button:hover {
+.contenedorCard button:hover, .contenedorLibro a button:hover {
     background-color: #dd762c;
 }
+
+
+#botonFilter, #botonAuthorFilter, #botonTituloFilter {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #ec870b;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#botonFilter:hover, #botonAuthorFilter:hover, #botonTituloFilter:hover {
+    background-color: #dd762c;
+}
+
 
 /* Responsive adjustments */
 @media (min-width: 600px) {
@@ -130,16 +169,28 @@ header {
         grid-template-columns: repeat(4, 1fr);
     }
 
+    #filters, #booksFilters {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    label, select, input, button {
+        margin: 0.5rem;
+        width: calc(33.333% - 1rem);
+    }
+
 }
 
 @media (min-width: 768px) {
+
     #cards {
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: space-around;
     }
 
-    .contenedorCard {
+   .contenedorCard, .contenedorLibro {
         flex: 0 1 calc(48% - 2rem);
         margin: 1rem;
     }
@@ -207,7 +258,7 @@ header {
   .contenedorCard img, .contenedorLibro img {
     width: 100%;
     height: auto;
-    max-width: 150px; /* Ajusta el tamaño máximo según tus necesidades */
+    max-width: 150px;
   }
 
 .contenedorLibro p {

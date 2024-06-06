@@ -13,8 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const sectionBooksFilters = document.querySelector('#booksFilters');
   const selectBookAToZ = document.querySelector('#bookFilterAToZ');
   const selectAuthorAToZ = document.querySelector('#authorFilterAToZ');
+  const buttonFilterTitle = document.querySelector('#botonTituloFilter');
+  const inputBookTitle = document.querySelector('#tituloLibro');
+  const buttonFilterAuthor = document.querySelector('#botonAuthorFilter');
+  const inputAuthorBook = document.querySelector('#autorLibro');
+  const clearButton = document.querySelector('#clear');
 
-  //let datosFiltrados = [];
+
   let botonCard;
   let arrayBack = JSON.parse(localStorage.getItem('arrayBack')) || [];
   let arrayBackBooks = [];
@@ -77,8 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   //Evento para filtrar por los géneros de las listas
-  botonFilterCategories.addEventListener('click', (evento) => {
-    evento.preventDefault();
+  botonFilterCategories.addEventListener('click', () => {
     let optionsSelected = selectFilterCategories.selectedOptions;
     let arraySelectedOptions = [];
     for (let i = 0; i < optionsSelected.length; i++) {
@@ -119,16 +123,65 @@ document.addEventListener('DOMContentLoaded', () => {
     resetSelects();
   });
 
+  //Evento para buscar un libro por su título
+  buttonFilterTitle.addEventListener('click', () => {
+    let valueLower = inputBookTitle.value.toLowerCase();
+    if (valueLower) {
+      const bookToSearch = arrayBackBooks.filter(element =>
+        element.book_details[0].title.toLowerCase().includes(valueLower));
+      if (bookToSearch.length > 0) {
+        console.log(bookToSearch);
+        cleanDOM(sectionCards);
+        cleanDOM(sectionBoton);
+        resetSelects();
+        pintarCardsTematicas(bookToSearch);
+      } else {
+        alert('No books found. Try again!');
+      }
+    } else {
+      alert('Empty search. Try again!');
+    }
+  });
+
+  //Evento para buscar un libro por autor
+  buttonFilterAuthor.addEventListener('click', () => {
+    let valueLower = inputAuthorBook.value.toLowerCase();
+    if (valueLower) {
+      const bookToSearch = arrayBackBooks.filter(element =>
+        element.book_details[0].author.toLowerCase().includes(valueLower));
+      if (bookToSearch.length > 0) {
+        console.log(bookToSearch);
+        cleanDOM(sectionCards);
+        cleanDOM(sectionBoton);
+        resetSelects();
+        pintarCardsTematicas(bookToSearch);
+      } else {
+        alert('No books found. Try again!');
+      }
+    } else {
+      alert('Empty search. Try again!');
+    }
+  });
+
   //Evento para volver al Index
   sectionBoton.addEventListener('click', ({ target }) => {
     if (target.classList.contains('botonBack')) {
       cleanDOM(sectionCards);
       cleanDOM(sectionTituloLista);
+      sectionBooksFilters.style.display = 'none';
       pintarCards(arrayBack);
       sectionFilters.style.display = 'flex';
       cleanDOM(sectionBoton);
     }
   });
+
+  //Evento para limpiar la sección libros y volver a cargar su versión inicial
+  /*clearButton.addEventListener('click', () => {
+
+  });
+  const clearBookSection = () => {
+  }*/
+ 
 
   //FUNCIONES
   //Función de acceso inicial a la API
@@ -169,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let respuesta2OK = await respuesta2.json();
         let datosLista = respuesta2OK.body;
         arrayBackBooks = [...datosLista];
-        console.log(datosLista);
+        console.log(arrayBackBooks);
         cleanDOM(sectionCards);
         sectionFilters.style.display = 'none';
         sectionBooksFilters.style.display = 'flex';
@@ -282,6 +335,8 @@ document.addEventListener('DOMContentLoaded', () => {
     selectFilterNewest.value = 'noOrder';
     selectBookAToZ.value = 'bookNoFilter';
     selectAuthorAToZ.value = 'bookNoFilter';
+    inputAuthorBook.value = '';
+    inputBookTitle.value = '';
   };
 
   //Función para filtrar por categorías actualizadas weekly o monthly
@@ -460,7 +515,6 @@ document.addEventListener('DOMContentLoaded', () => {
     sectionBooksFilters.style.display = 'none';
     pintarCards(arrayBack);
   };
-
 
 
 
