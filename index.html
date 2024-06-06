@@ -50,7 +50,28 @@
                 <button class="buttonFilter" form="formFilters" id="botonFilter">Filter</button>
             </form>
         </section>
-
+        <section id="booksFilters">
+            <form class="formBooksFilters">
+                <label for="bookFilterAToZ">Filter books (A to Z):</label>
+                <select id="bookFilterAToZ">
+                    <option value="bookNoFilter">--Select--</option>
+                    <option value="aToz">A to Z</option>
+                    <option value="zToa">Z to A</option>
+                </select>
+                <label for="authorFilterAToZ">Filter authors (A to Z):</label>
+                <select id="authorFilterAToZ">
+                    <option value="bookNoFilter">--Select--</option>
+                    <option value="aToz">A to Z</option>
+                    <option value="zToa">Z to A</option>
+                </select>
+                <label for="tituloLibro"></label>
+                <input type="text" id="tituloLibro" name="tituloLibro" placeholder="find by title"/>
+                <button class="buttonTituloFilter" id="botonTituloFilter" name="botonTituloFilter">Find the book</button>
+                <label for="autorLibro"></label>
+                <input type="text" id="autorLibro" name="autorLibro" placeholder="find by author"/>
+                <button class="buttonAuthorFilter" id="botonAuthorFilter" name="botonAuthorFilter">Find by author</button>
+            </form>
+        </section>
         <section id="sectionBoton">
         </section>
         <section id="sectionTituloLista">
