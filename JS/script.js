@@ -8,7 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const selectFilterCategories = document.querySelector('#filterCategory');
   const selectAToZ = document.querySelector('#filterAToZ');
   const botonFilterCategories = document.querySelector('.buttonFilter');
-
+  const selectFilterOldest = document.querySelector('#filterOldest');
+  const selectFilterNewest = document.querySelector('#filterNewest');
 
   //let datosFiltrados = [];
   let botonCard;
@@ -18,38 +19,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //EVENTOS
   //Evento para acceder al género de los libros
-  sectionCards.addEventListener('click', (event) => {
-    if (event.target.tagName === 'BUTTON' && event.target.dataset.link) {
+  sectionCards.addEventListener('click', ({target}) => {
+    if (target.tagName === 'BUTTON' && target.dataset.link) {
       cleanDOM(sectionBoton);
-      const linkURL = event.target.dataset.link;
+      const linkURL = target.dataset.link;
       accesoAPILista2(linkURL);
     }
   });
 
   //Evento para filtrar por categorías que se actualizan semanal o mensualmente (con opción de
   //quitar el filtro y mostrarlos todos)
-  selectFilter.addEventListener('change', (evento) => {
-    if (evento.target.value === 'weekly') {
+  selectFilter.addEventListener('change', ({target}) => {
+    if (target.value === 'weekly') {
       cleanDOM(sectionCards);
       filtrarCards('weekly');
-    } else if (evento.target.value === 'monthly') {
+    } else if (target.value === 'monthly') {
       cleanDOM(sectionCards);
       filtrarCards('monthly');
     } else {
       cleanDOM(sectionCards);
       pintarCards(arrayBack);
-      resetSelects();
     }
   });
 
   //Evento para filtrar por orden alfabético y a la inversa las listas
-  selectAToZ.addEventListener('change', (evento) => {
-    if (evento.target.value === 'aToz') {
-      filterAlphabetical();
-    } else if (evento.target.value === 'zToa') {
-      inverseFilterAlphabetical();
+  selectAToZ.addEventListener('change', ({target}) => {
+    if (target.value === 'aToz') {
+      filterAlphabetical('aToz');
+    } else if (target.value === 'zToa') {
+      filterAlphabetical('zToa');
     }
+    resetSelects();
   });
+
+  //Evento para filtrar por oldest_published_date
+  selectFilterOldest.addEventListener('change', ({ target }) => {
+    if (target.value === 'toOldest') {
+      filterByOldest('toOldest');
+    } else if (target.value === 'fromOldest') {
+      filterByOldest('fromOldest');
+    }
+    resetSelects();
+  });
+
+    //Evento para filtrar por newest_published_date
+    selectFilterNewest.addEventListener('change', ({ target }) => {
+      if (target.value === 'toNewest') {
+        filterByNewest('toNewest');
+      } else if (target.value === 'fromNewest') {
+        filterByNewest('fromNewest');
+      }
+      resetSelects();
+    });
 
 
   //Evento para filtrar por los géneros de las listas
@@ -71,14 +92,15 @@ document.addEventListener('DOMContentLoaded', () => {
       pintarCards(arrayFiltrado);
       console.log(arrayFiltrado)
     }
+    resetSelects();
   });
 
 
-
   //Evento para volver al Index
-  sectionBoton.addEventListener('click', (event) => {
-    if (event.target.classList.contains('botonBack')) {
-      cleanDOM(sectionCards, sectionTituloLista);
+  sectionBoton.addEventListener('click', ({target}) => {
+    if (target.classList.contains('botonBack')) {
+      cleanDOM(sectionCards);
+      cleanDOM(sectionTituloLista);
       pintarCards(arrayBack);
       sectionFilters.style.display = 'flex';
       cleanDOM(sectionBoton);
@@ -98,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         let respuestaOK = await respuesta.json();
         let listasAPintar = respuestaOK.body.results;
-       // datosFiltrados = [...listasAPintar];
+        // datosFiltrados = [...listasAPintar];
         arrayBack = listasAPintar;
         localStorage.setItem('arrayBack', JSON.stringify(arrayBack));
 
@@ -230,7 +252,8 @@ document.addEventListener('DOMContentLoaded', () => {
     selectFilterCategories.value = 'todas';
     selectFilter.value = 'all';
     selectAToZ.value = 'sinFiltro';
-
+    selectFilterOldest.value = "noOrder";
+    selectFilterNewest.value = 'noOrder';
   };
 
   //Función para filtrar por categorías actualizadas weekly o monthly
@@ -238,50 +261,101 @@ document.addEventListener('DOMContentLoaded', () => {
     let filtroAPintar = [...arrayBack].filter(card => card.updated.toLowerCase() === filtro);
     console.log(filtroAPintar)
     pintarCards(filtroAPintar);
-    resetSelects();
   };
 
   //Función para filtrar las categorías por orden alfabético
-  const filterAlphabetical = () => {
-    let alphabeticalFilter = [...arrayBack].sort((a, b) => {
-      if (a.list_name < b.list_name) {
-        return -1;
-      }
-      if (a.list_name > b.list_name) {
-        return 1;
-      }
-      return 0;
-    });
-    console.log(alphabeticalFilter)
-    cleanDOM(sectionCards);
-    pintarCards(alphabeticalFilter);
-    resetSelects();
+  const filterAlphabetical = (value) => {
+    if (value === 'aToz') {
+      let alphabeticalFilter = [...arrayBack].sort((a, b) => {
+        if (a.list_name < b.list_name) {
+          return -1;
+        } else if (a.list_name > b.list_name) {
+          return 1;
+        } return 0;
+      });
+      console.log(alphabeticalFilter)
+      cleanDOM(sectionCards);
+      pintarCards(alphabeticalFilter);
+    } else if (value === 'zToa') {
+      let alphabeticalFilter = [...arrayBack].sort((a, b) => {
+        if (a.list_name > b.list_name) {
+          return -1;
+        } else if (a.list_name < b.list_name) {
+          return 1;
+        } return 0;
+      });
+      console.log(alphabeticalFilter)
+      cleanDOM(sectionCards);
+      console.log(arrayBack)
+      pintarCards(alphabeticalFilter);
+    }
+    
   };
 
-  //Función para filtrar las categorías por el orden alfabético inverso
-  const inverseFilterAlphabetical = () => {
-    let inverseAlphabeticalFilter = [...arrayBack].sort((a, b) => {
-      if (a.list_name > b.list_name) {
-        return -1;
-      }
-      if (a.list_name < b.list_name) {
-        return 1;
-      }
-      return 0;
-    });
-    console.log(inverseAlphabeticalFilter)
-    cleanDOM(sectionCards);
-    console.log(arrayBack)
-    pintarCards(inverseAlphabeticalFilter);
-    resetSelects();
+  //Función para filtrar las categorías por su oldest_published_date
+  const filterByOldest = (value) => {
+    if (value === 'fromOldest') {
+      let oldestFilter = [...arrayBack].sort((a, b) => {
+        let oldestA = new Date(a.oldest_published_date);
+        let oldestB = new Date(b.oldest_published_date);
+        if (oldestA.getTime() < oldestB.getTime()) {
+          return -1;
+        } else if (oldestA.getTime() > oldestB.getTime()) {
+          return 1;
+        } return 0;
+      });
+      cleanDOM(sectionCards);
+      pintarCards(oldestFilter);
+    } else if (value === 'toOldest') {
+      let oldestFilter = [...arrayBack].sort((a, b) => {
+        let oldestA = new Date(a.oldest_published_date);
+        let oldestB = new Date(b.oldest_published_date);
+        if (oldestA.getTime() > oldestB.getTime()) {
+          return -1;
+        } else if (oldestA.getTime() < oldestB.getTime()) {
+          return 1;
+        } return 0;
+      });
+      cleanDOM(sectionCards);
+      pintarCards(oldestFilter);
+    }
+  };
+
+   //Función para filtrar las categorías por su newest_published_date
+   const filterByNewest = (value) => {
+    if (value === 'fromNewest') {
+      let newestFilter = [...arrayBack].sort((a, b) => {
+        let newestA = new Date(a.oldest_published_date);
+        let newestB = new Date(b.oldest_published_date);
+        if (newestA.getTime() < newestB.getTime()) {
+          return -1;
+        } else if (newestA.getTime() > newestB.getTime()) {
+          return 1;
+        } return 0;
+      });
+      cleanDOM(sectionCards);
+      pintarCards(newestFilter);
+    } else if (value === 'toNewest') {
+      let newestFilter = [...arrayBack].sort((a, b) => {
+        let newestA = new Date(a.oldest_published_date);
+        let newestB = new Date(b.oldest_published_date);
+        if (newestA.getTime() > newestB.getTime()) {
+          return -1;
+        } else if (newestA.getTime() < newestB.getTime()) {
+          return 1;
+        } return 0;
+      });
+      cleanDOM(sectionCards);
+      pintarCards(newestFilter);
+    }
   };
 
   //Función para filtrar por géneros de libros(filtra la segunda llamada a la API)
-  const filtrarLibros = (filtro2) => {
+  /*const filtrarLibros = (filtro2) => {
     let librosPorGenero = arrayBack.filter(card => card.nombre === filtro2);
     console.log(librosPorGenero);
 
-  };
+  };*/
 
   //Funciones para gestionar el spinner de carga
   const mostrarSpinner = () => {

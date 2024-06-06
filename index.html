@@ -27,13 +27,25 @@
                 </select>
                 <label for="filterAToZ">Filter A to Z:</label>
                 <select id="filterAToZ">
-                    <option value="sinFiltro"></option>
+                    <option value="sinFiltro">--Select--</option>
                     <option value="aToz">A to Z</option>
                     <option value="zToa">Z to A</option>
                 </select>
+                <label for="filterOldest">Filter by oldest:</label>
+                <select id="filterOldest">
+                    <option value="noOrder">--Select--</option>
+                    <option value="toOldest">To oldest</option>
+                    <option value="fromOldest">From oldest</option>
+                </select>
+                <label for="filterNewest">Filter by newest:</label>
+                <select id="filterNewest">
+                    <option value="noOrder">--Select--</option>
+                    <option value="toNewest">To newest</option>
+                    <option value="fromNewest">From newest</option>
+                </select>
                 <label for="filterCategory">Filter by category:</label>
                 <select id="filterCategory" multiple>
-                    <option value="Todas" id="todas" name="todas">Todas</option>
+                    <option value="Todas" id="todas" name="todas">All</option>
                 </select>
                 <button class="buttonFilter" form="formFilters" id="botonFilter">Filter</button>
             </form>
