@@ -8,6 +8,7 @@ body {
     font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
+
 header {
     display: flex;
     flex-direction: column;
@@ -65,9 +66,11 @@ header {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-  
     gap: 10px;
     padding: 1rem 0;
+    margin: 0 1rem;
+    max-width: 600px;
+
 }
 
 #filters label, #booksFilters label {
@@ -161,6 +164,8 @@ label, select, input, button {
     background-color: #dd762c;
 }
 
+/*Icono corazón*/
+
 
 /* Responsive adjustments */
 @media (min-width: 600px) {
@@ -173,6 +178,10 @@ label, select, input, button {
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: center;
+        align-content: center;
+        align-items: center;
+        max-width: 770px;
+
     }
 
     label, select, input, button {
@@ -195,6 +204,8 @@ label, select, input, button {
         margin: 1rem;
     }
 }
+
+
 
 @media (min-width: 1024px) {
     .contenedorCard {
@@ -278,3 +289,40 @@ label, select, input, button {
 .contenedorLibro a button:hover {
     background-color: #27ae60;
 }
+
+#heart {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #2ecc71;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#heart:hover {
+    background-color: #27ae60;
+}
+
+#pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+  }
+  
+  #pagination-controls button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #ec870b;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 0 0.5rem;
+  }
+  
+  #pagination-controls button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }

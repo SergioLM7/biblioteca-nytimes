@@ -18,14 +18,45 @@ document.addEventListener('DOMContentLoaded', () => {
   const buttonFilterAuthor = document.querySelector('#botonAuthorFilter');
   const inputAuthorBook = document.querySelector('#autorLibro');
   const clearButton = document.querySelector('#clear');
+  const buttonPrevPage = document.getElementById('prevPage');
+  const buttonNextPage = document.getElementById('nextPage');
+  const pageInfo = document.getElementById('pageInfo');
+  const itemsPerPage = 5;
 
-
+  //let activeArray; Esta variable puede cambiarse a 'arrayBackBooks' según el array activo
+  let currentPage = 1;
   let botonCard;
   let arrayBack = JSON.parse(localStorage.getItem('arrayBack')) || [];
   let arrayBackBooks = [];
 
 
   //EVENTOS
+  // Eventos para cambiar de página
+  //Evento botón PREV
+  buttonPrevPage.addEventListener('click', () => {
+    if (currentPage > 1) {
+      currentPage--;
+      if (activeArray === arrayBack) {
+        showPage(currentPage, arrayBack, pintarCards);
+      } else {
+        showPage(currentPage, arrayBackBooks, pintarCardsTematicas);
+      }
+    }
+  });
+
+  //Evento botón NEXT
+  buttonNextPage.addEventListener('click', () => {
+    const totalPages = Math.ceil((activeArray === arrayBack ? arrayBack.length : arrayBackBooks.length) / itemsPerPage);
+    if (currentPage < totalPages) {
+      currentPage++;
+      if (activeArray === arrayBack) {
+        showPage(currentPage, arrayBack, pintarCards);
+      } else {
+        showPage(currentPage, arrayBackBooks, pintarCardsTematicas);
+      }
+    }
+  });
+
   //Evento para acceder al género de los libros
   sectionCards.addEventListener('click', ({ target }) => {
     if (target.tagName === 'BUTTON' && target.dataset.link) {
@@ -126,10 +157,11 @@ document.addEventListener('DOMContentLoaded', () => {
   //Evento para buscar un libro por su título
   buttonFilterTitle.addEventListener('click', () => {
     let valueLower = inputBookTitle.value.toLowerCase();
+    console.log(arrayBackBooks);
     if (valueLower) {
       const bookToSearch = arrayBackBooks.filter(element =>
         element.book_details[0].title.toLowerCase().includes(valueLower));
-      if (bookToSearch.length > 0) {
+      if (bookToSearch.length >= 0) {
         console.log(bookToSearch);
         cleanDOM(sectionCards);
         cleanDOM(sectionBoton);
@@ -146,10 +178,11 @@ document.addEventListener('DOMContentLoaded', () => {
   //Evento para buscar un libro por autor
   buttonFilterAuthor.addEventListener('click', () => {
     let valueLower = inputAuthorBook.value.toLowerCase();
+    console.log(arrayBackBooks)
     if (valueLower) {
       const bookToSearch = arrayBackBooks.filter(element =>
         element.book_details[0].author.toLowerCase().includes(valueLower));
-      if (bookToSearch.length > 0) {
+      if (bookToSearch.length >= 0) {
         console.log(bookToSearch);
         cleanDOM(sectionCards);
         cleanDOM(sectionBoton);
@@ -176,12 +209,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   //Evento para limpiar la sección libros y volver a cargar su versión inicial
-  /*clearButton.addEventListener('click', () => {
-
+  clearButton.addEventListener('click', () => {
+    clearBookSection();
   });
-  const clearBookSection = () => {
-  }*/
- 
+
 
   //FUNCIONES
   //Función de acceso inicial a la API
@@ -197,8 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let respuestaOK = await respuesta.json();
         let listasAPintar = respuestaOK.body.results;
         arrayBack = listasAPintar;
-        localStorage.setItem('arrayBack', JSON.stringify(arrayBack));
-
+        localStorage.setItem('arrayBack', JSON.stringify(listasAPintar));
         pintarCards(listasAPintar);
         ocultarSpinner();
       }
@@ -211,7 +241,6 @@ document.addEventListener('DOMContentLoaded', () => {
   //Función de acceso a la API para 2ª lista
   const accesoAPILista2 = async (link) => {
     mostrarSpinner();
-    arrayBackBooks = [];
     try {
       const respuesta2 = await fetch(`https://api.nytimes.com/svc/books/lists/${link}.json?api-key=AxAIDguQa4ASm7ICC6g7eMqm1XG0WPLx`, {
         method: 'GET'
@@ -221,12 +250,11 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         let respuesta2OK = await respuesta2.json();
         let datosLista = respuesta2OK.body;
-        arrayBackBooks = [...datosLista];
-        console.log(arrayBackBooks);
-        cleanDOM(sectionCards);
+        arrayBackBooks = datosLista;
         sectionFilters.style.display = 'none';
         sectionBooksFilters.style.display = 'flex';
-        pintarCardsTematicas(datosLista);
+        cleanDOM(sectionCards);
+        pintarCardsTematicas(arrayBackBooks);
         ocultarSpinner();
       }
 
@@ -311,9 +339,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const botonComprar = document.createElement("BUTTON");
       botonComprar.textContent = "BUY AT AMAZON";
 
+      const favoriteButton = document.createElement("BUTTON");
+      favoriteButton.id = 'heart';
+      favoriteButton.textContent = 'LIKE';
+
 
       enlaceBoton.append(botonComprar);
-      fragment.append(h4Libro, imgLibro, semanasEnLista, description, enlaceBoton)
+      fragment.append(h4Libro, imgLibro, semanasEnLista, description, enlaceBoton, favoriteButton)
       contenedorLibro.append(fragment);
       sectionCards.append(contenedorLibro);
       sectionTituloLista.append(tituloLista);
@@ -325,6 +357,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const cleanDOM = (element) => {
     element.innerHTML = '';
   };
+
+  //Función para recargar la sección de libros
+  const clearBookSection = () => {
+    cleanDOM(sectionCards);
+    cleanDOM(sectionBoton);
+    pintarCardsTematicas(arrayBackBooks);
+  }
 
   //Función reset selects
   const resetSelects = () => {
@@ -342,7 +381,6 @@ document.addEventListener('DOMContentLoaded', () => {
   //Función para filtrar por categorías actualizadas weekly o monthly
   const filtrarCards = (filtro) => {
     let filtroAPintar = [...arrayBack].filter(card => card.updated.toLowerCase() === filtro);
-    console.log(filtroAPintar)
     pintarCards(filtroAPintar);
   };
 
@@ -358,6 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       console.log(alphabeticalFilter)
       cleanDOM(sectionCards);
+      currentPage = 0;
       pintarCards(alphabeticalFilter);
     } else if (value === 'zToa') {
       let alphabeticalFilter = [...arrayBack].sort((a, b) => {
@@ -369,6 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       console.log(alphabeticalFilter)
       cleanDOM(sectionCards);
+      currentPage = 0;
       console.log(arrayBack)
       pintarCards(alphabeticalFilter);
     }
@@ -488,14 +528,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
   };
 
-  //Función para filtrar por géneros de libros(filtra la segunda llamada a la API)
-  /*const filtrarLibros = (filtro2) => {
-    let librosPorGenero = arrayBack.filter(card => card.nombre === filtro2);
-    console.log(librosPorGenero);
+  //Paginación de la web
+  // Función para actualizar la información de la página y los botones de navegación
+  const updatePaginationControls = (totalItems) => {
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+    buttonPrevPage.disabled = currentPage === 1;
+    buttonNextPage.disabled = currentPage === totalPages;
+  };
 
-  };*/
+  // Función para mostrar una página específica de libros
+  const showPage = (page, arrayData, pintarFuncion) => {
+    cleanDOM(sectionCards);
+    cleanDOM(sectionBoton);
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const itemsToShow = arrayData.slice(startIndex, endIndex);
 
-  //Funciones para gestionar el spinner de carga
+    pintarFuncion(itemsToShow);
+    updatePaginationControls(arrayData.length);
+  };
+
+
+
+  //Función para resetear la paginación
+  const pagReset = (array) => {
+    activeArray = array
+    currentPage = 1;
+    updatePaginationControls(array.length);
+
+  };
+
+//FUnción para ocultar los botones de página
+const hidePageButtons = () => {
+   buttonPrevPage.style.display='none'
+    buttonNextPage.style.display='none'
+};
+
+  //Función para mostrar el spinner de carga
   const mostrarSpinner = () => {
     spinner.style.display = 'block';
   };
@@ -508,14 +578,17 @@ document.addEventListener('DOMContentLoaded', () => {
   //Llamadas a funciones
   if (arrayBack.length === 0) {
     accesoAPI();
+
     sectionFilters.style.display = 'flex';
     sectionBooksFilters.style.display = 'none';
+    hidePageButtons();
+
   } else {
     sectionFilters.style.display = 'flex';
     sectionBooksFilters.style.display = 'none';
+    hidePageButtons();
     pintarCards(arrayBack);
   };
-
 
 
 });//LOADED
