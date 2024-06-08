@@ -8,6 +8,38 @@ body {
     font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
+/*Containers log in y register*/
+/*.sectionFormUser {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.1);
+    position:fixed;
+    pointer-events: none;
+    opacity: 0;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+}*/
+
+/*#divFormAuth {
+    background-color: #c76e2e;
+    width: 600px;
+    max-width: 100%;
+    padding: 30px 50px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}*/
+
+
+/*.show {
+    pointer-events: auto;
+    opacity: 1;
+}*/
+
+
 
 header {
     display: flex;
@@ -70,7 +102,6 @@ header {
     padding: 1rem 0;
     margin: 0 1rem;
     max-width: 600px;
-
 }
 
 #filters label, #booksFilters label {
@@ -86,6 +117,7 @@ label, select, input, button {
     width: 100%;
 }
 
+/*Botones*/
 .buttonFilter, .buttonTituloFilter, .buttonAuthorFilter {
     padding: 0.5rem 1rem;
     border: none;
@@ -99,6 +131,9 @@ label, select, input, button {
 .buttonFilter:hover, .buttonTituloFilter:hover, .buttonAuthorFilter:hover {
     background-color: #dd762c;
 }
+
+
+
 
 /* Cards */ 
 #cards {
@@ -163,8 +198,6 @@ label, select, input, button {
 #botonFilter:hover, #botonAuthorFilter:hover, #botonTituloFilter:hover {
     background-color: #dd762c;
 }
-
-/*Icono corazón*/
 
 
 /* Responsive adjustments */
@@ -290,6 +323,7 @@ label, select, input, button {
     background-color: #27ae60;
 }
 
+/*Botón me gusta*/
 #heart {
     padding: 0.5rem 1rem;
     border: none;
@@ -304,6 +338,7 @@ label, select, input, button {
     background-color: #27ae60;
 }
 
+/*Pagination*/
 #pagination-controls {
     display: flex;
     justify-content: center;

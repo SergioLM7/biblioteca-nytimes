@@ -17,57 +17,90 @@
         <section id="spinner" class="spinner">
             <div class="loader"></div>
         </section>
+
+        <section class="loginButtons">
+            <button id="loginButton">Log in</button>
+            <button id="registerButton">Register</button>
+        </section>
+
+        <section class="sectionFormUser" id="formRegister">
+            <form id="formReg" action="#" method="POST">
+                <label for="email">Email:</label><br>
+                <input type="email" id="email" name="email" placeholder="Introduce email..."><br>
+                <label for="pass">Password:</label><br>
+                <input type="password" id="pass" name="pass" placeholder="Introduce password..."><br>
+                <label for="pass2">Repite password:</label><br>
+                <input type="password" id="pass2" name="pass2" placeholder="Repite password..."><br><br>
+                <button type="submit" value="submit" form="formReg">Register</button>
+                <button type="button" class="close" id="closeRegister">X</button>
+            </form>
+        </section>
+
+        <section class="sectionFormUser" id="formLogIn">
+            <div id="divFormAuth">
+                <form id="formAuth" action="#" method="POST">
+                    <label for="userEmail">Email:</label><br>
+                    <input type="email" id="userEmail" name="userEmail" placeholder="Introduce email..."><br>
+                    <label for="userPassword">Password:</label><br>
+                    <input type="password" id="userPassword" name="userPassword"
+                        placeholder="Introduce password..."><br>
+                    <input type="submit" value="Log in" form="formAuth" />
+                </form>
+                <button type="button" class="close" id="closeLogIn">X</button>
+            </div>
+        </section>
+
         <section id="filters">
-                <label for="filter">Filter by update:</label>
-                <select id="filter">
-                    <option value="all">All</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                </select>
-                <label for="filterAToZ">Filter A to Z:</label>
-                <select id="filterAToZ">
-                    <option value="sinFiltro">--Select--</option>
-                    <option value="aToz">A to Z</option>
-                    <option value="zToa">Z to A</option>
-                </select>
-                <label for="filterOldest">Filter by oldest:</label>
-                <select id="filterOldest">
-                    <option value="noOrder">--Select--</option>
-                    <option value="toOldest">To oldest</option>
-                    <option value="fromOldest">From oldest</option>
-                </select>
-                <label for="filterNewest">Filter by newest:</label>
-                <select id="filterNewest">
-                    <option value="noOrder">--Select--</option>
-                    <option value="toNewest">To newest</option>
-                    <option value="fromNewest">From newest</option>
-                </select>
-                <label for="filterCategory">Filter by category:</label>
-                <select id="filterCategory" multiple>
-                    <option value="Todas" id="todas" name="todas">All</option>
-                </select>
-                <button class="buttonFilter" form="formFilters" id="botonFilter">Filter</button>
+            <label for="filter">Filter by update:</label>
+            <select id="filter">
+                <option value="all">All</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+            </select>
+            <label for="filterAToZ">Filter A to Z:</label>
+            <select id="filterAToZ">
+                <option value="sinFiltro">--Select--</option>
+                <option value="aToz">A to Z</option>
+                <option value="zToa">Z to A</option>
+            </select>
+            <label for="filterOldest">Filter by oldest:</label>
+            <select id="filterOldest">
+                <option value="noOrder">--Select--</option>
+                <option value="toOldest">To oldest</option>
+                <option value="fromOldest">From oldest</option>
+            </select>
+            <label for="filterNewest">Filter by newest:</label>
+            <select id="filterNewest">
+                <option value="noOrder">--Select--</option>
+                <option value="toNewest">To newest</option>
+                <option value="fromNewest">From newest</option>
+            </select>
+            <label for="filterCategory">Filter by category:</label>
+            <select id="filterCategory" multiple>
+                <option value="Todas" id="todas" name="todas">All</option>
+            </select>
+            <button class="buttonFilter" form="formFilters" id="botonFilter">Filter</button>
         </section>
         <section id="booksFilters">
-                <label for="bookFilterAToZ">Filter books (A to Z):</label>
-                <select id="bookFilterAToZ">
-                    <option value="bookNoFilter">--Select--</option>
-                    <option value="aToz">A to Z</option>
-                    <option value="zToa">Z to A</option>
-                </select>
-                <label for="authorFilterAToZ">Filter authors (A to Z):</label>
-                <select id="authorFilterAToZ">
-                    <option value="bookNoFilter">--Select--</option>
-                    <option value="aToz">A to Z</option>
-                    <option value="zToa">Z to A</option>
-                </select>
-                <label for="tituloLibro"></label>
-                <input type="text" id="tituloLibro" name="tituloLibro" placeholder="find by title" maxlength="6"/>
-                <button class="buttonTituloFilter" id="botonTituloFilter" name="botonTituloFilter">Find the book</button>
-                <label for="autorLibro"></label>
-                <input type="text" id="autorLibro" name="autorLibro" placeholder="find by author" maxlength="6"/>
-                <button class="buttonAuthorFilter" id="botonAuthorFilter" name="botonAuthorFilter">Find by author</button>
-                <button class="clearButton" id="clear" name="clear">Clear</button>
+            <label for="bookFilterAToZ">Filter books (A to Z):</label>
+            <select id="bookFilterAToZ">
+                <option value="bookNoFilter">--Select--</option>
+                <option value="aToz">A to Z</option>
+                <option value="zToa">Z to A</option>
+            </select>
+            <label for="authorFilterAToZ">Filter authors (A to Z):</label>
+            <select id="authorFilterAToZ">
+                <option value="bookNoFilter">--Select--</option>
+                <option value="aToz">A to Z</option>
+                <option value="zToa">Z to A</option>
+            </select>
+            <label for="tituloLibro"></label>
+            <input type="text" id="tituloLibro" name="tituloLibro" placeholder="find by title" maxlength="6" />
+            <button class="buttonTituloFilter" id="botonTituloFilter" name="botonTituloFilter">Find the book</button>
+            <label for="autorLibro"></label>
+            <input type="text" id="autorLibro" name="autorLibro" placeholder="find by author" maxlength="6" />
+            <button class="buttonAuthorFilter" id="botonAuthorFilter" name="botonAuthorFilter">Find by author</button>
+            <button class="clearButton" id="clear" name="clear">Clear</button>
         </section>
         <section id="sectionBoton">
         </section>
@@ -76,6 +109,7 @@
         <section id="cards">
 
         </section>
+
         <section id="pagination-controls">
             <button id="prevPage" disabled>Previous</button>
             <article id="pageInfo">
@@ -83,7 +117,19 @@
             </article>
             <button id="nextPage">Next</button>
         </section>
+
+        <section id="logOutSection">
+            <p id="message"></p>
+            <button id="logOut">Logout</button>
+        </section>
     </main>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+         https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-auth.js"></script>
     <script src="JS/script.js"></script>
 </body>
 
