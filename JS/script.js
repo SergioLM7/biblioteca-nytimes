@@ -54,7 +54,7 @@ let arrayFavorites = [];
 //EVENTOS
 // Eventos para cambiar de página
 //Evento botón PREV
-buttonPrevPage.addEventListener('click', () => {
+/*buttonPrevPage.addEventListener('click', () => {
   if (currentPage > 1) {
     currentPage--;
     if (activeArray === arrayBack) {
@@ -63,10 +63,10 @@ buttonPrevPage.addEventListener('click', () => {
       showPage(currentPage, arrayBackBooks, pintarCardsTematicas);
     }
   }
-});
+});*/
 
 //Evento botón NEXT
-buttonNextPage.addEventListener('click', () => {
+/*buttonNextPage.addEventListener('click', () => {
   const totalPages = Math.ceil((activeArray === arrayBack ? arrayBack.length : arrayBackBooks.length) / itemsPerPage);
   if (currentPage < totalPages) {
     currentPage++;
@@ -76,7 +76,7 @@ buttonNextPage.addEventListener('click', () => {
       showPage(currentPage, arrayBackBooks, pintarCardsTematicas);
     }
   }
-});
+});*/
 
 
 
@@ -255,6 +255,57 @@ clearButton.addEventListener('click', () => {
   clearBookSection();
 });
 
+//Evento botón MyProfile
+document.querySelector('.loginButtons').addEventListener('click', (event) => {
+  if (event.target.matches('#myProfileButton')) {
+    const user = firebase.auth().currentUser;
+    checkFavorites(user.uid)
+      .then(favoritesNoEmpty => {
+        if (favoritesNoEmpty) {
+          cleanDOM(sectionCards);
+          getFavorite(user.uid)
+            .then(favoriteGetted => {
+              if (favoriteGetted && favoriteGetted.length > 0) {
+                cleanDOM(sectionBoton);
+                sectionFilters.style.display = 'none';
+                pintarCardsTematicas(favoriteGetted);
+                sectionTituloLista.innerHTML = 'My profile';
+
+              } else {
+                console.log('No se obtuvieron favoritos.');
+              }
+            })
+            .catch(error => console.log('Error imprimiendo favoritos ' + error))
+        } else {
+          sectionCards.innerHTML = '<p>No tienes ningún libro marcado como favorito.</p>';
+        }
+      })
+      .catch(error => {
+        console.error('Error verificando favoritos: ', error);
+      });
+
+  }
+
+})
+
+//Función para recuperar los datos en favorite
+const getFavorite = (userID) => {
+  const userRef = firebase.firestore().collection('users').doc(userID);
+
+  return userRef.get().then((doc) => {
+    if (doc.exists) {
+      const favorites = doc.data().favorites || [];
+      return favorites; // Devuelve los favoritos como array
+    } else {
+      console.error('No se encontró el documento del usuario.');
+      return [];
+    }
+  }).catch((error) => {
+    console.error('Error obteniendo el documento del usuario: ', error);
+    throw error;
+  })
+};
+
 //EVENTOS FIREBASE 
 //Evento para el botón de Register
 document.querySelector("#formReg").addEventListener("submit", (event) => {
@@ -311,9 +362,9 @@ const findBook = (id) => {
   return bookFinded;
 };
 
-//FUnción para buscar un libro en la base de datos de Firebase
-const isBookInFavorites = (userId, book) => {
-  const userRef = firebase.firestore().collection('users').doc(userId);
+//FUnción para buscar si un libro esta en la base de datos de Firebase
+const isBookInFavorites = (userID, book) => {
+  const userRef = firebase.firestore().collection('users').doc(userID);
 
   return userRef.get()
     .then((doc) => {
@@ -329,7 +380,32 @@ const isBookInFavorites = (userId, book) => {
       console.error(`Error ${error} al obtener el documento del usuario`);
       throw error;
     });
-}
+};
+
+//Función para comprobar si hay algún libro en favorites
+const checkFavorites = (userID) => {
+  const userRef = firebase.firestore().collection('users').doc(userID);
+
+  return userRef.get()
+    .then((doc) => {
+      if (doc.exists) {
+        const favorites = doc.data().favorites;
+        if (favorites) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        console.error('No se encontró el documento del usuario.');
+        return false;
+      }
+    })
+    .catch((error) => {
+      console.error(`Error ${error} al obtener el documento del usuario`);
+      throw error;
+    });
+
+};
 
 //Función para añadir libro a favoritos de Firebase
 const addBookFav = (uid, book) => {
@@ -383,7 +459,7 @@ const deleteBookFav = (uid, book) => {
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
     console.log(`Está en el sistema:${user.email} ${user.uid}`);
-    document.getElementById("message").innerText = `${user.uid} está en el sistema`;
+    document.getElementById("message").innerText = `${user.email} está en el sistema`;
   } else {
     console.log("no hay usuarios en el sistema");
     document.getElementById("message").innerText = `No hay usuarios en el sistema`;
@@ -449,34 +525,13 @@ const signInUser = (email, password) => {
     });
 };
 
-//Función para editar datos de un usuario
-const readUser = (userID) => {
-  //Petición a Firestore para leer el documento del usuario y añadirle un valor
-  const idDOC = db.collection("users").doc();
-  console.log(idDOC)
-  idDOC.get()
-    .then((querySnapshot) => {
-      querySnapshot.forEach((document) => document.find((user) => user.id = userID))
-      console.log(querySnapshot);
-    })
-
-    .catch(() => console.log('Error reading documents'));;
-
-
-  // .then(() => console.log("Document successfully updated with favorite books!"))
-  //.catch((error) => console.log(`Error ${error} updating document`))
-};
-
 //Función para el logOut del usuario
 const signOut = () => {
   let user = firebase.auth().currentUser;
 
   firebase.auth().signOut()
     .then(() => {
-      console.log("Sale del sistema: " + user.email)
-      const buttonMyProfile = document.querySelector('#myProfileButton');
-      buttonMyProfile.style.display = 'none';
-
+      alert(`${user.email} cerró sesión.`)
     })
     .catch((error) => {
       console.log("hubo un error: " + error);
