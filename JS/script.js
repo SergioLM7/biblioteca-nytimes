@@ -307,6 +307,15 @@ const getFavorite = (userID) => {
 };
 
 //EVENTOS FIREBASE 
+//Evento para modificar la persistencia del Log In.
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
+  .then(() => {
+    return firebase.auth().signInWithEmailAndPassword(email, password);
+  })
+  .catch((error) => {
+    throw (`Error ${error.code}a la hora de gestionar la persistencia: ${error.message}`)
+  });
+
 //Evento para el botón de Register
 document.querySelector("#formReg").addEventListener("submit", (event) => {
   event.preventDefault();
