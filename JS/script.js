@@ -47,6 +47,7 @@ let currentPage = 1;
 let botonCard;
 let arrayBack = JSON.parse(localStorage.getItem('arrayBack')) || [];
 let arrayBackBooks = [];
+let arrayFavorites = [];
 
 
 
@@ -77,6 +78,8 @@ buttonNextPage.addEventListener('click', () => {
   }
 });
 
+
+
 //Evento botón LogIn Popup
 botonLogIn.addEventListener('click', () => {
   document.querySelector('.sectionFormUser').classList.add('show');
@@ -85,7 +88,7 @@ botonLogIn.addEventListener('click', () => {
 
 buttonLogClose.addEventListener('click', () => {
   document.querySelector('.sectionFormUser').classList.remove('show');
-  
+
 
 });
 
@@ -271,7 +274,110 @@ document.querySelector("#formAuth").addEventListener("submit", (event) => {
   signInUser(email, pass)
 });
 
+//Listener del botón Me Gusta
+sectionCards.addEventListener('click', (event) => {
+  if (event.target.matches('.heartButton')) {
+    const user = firebase.auth().currentUser;
 
+    if (user) {
+      const bookID = event.target.id;
+      const bookData = findBook(bookID);
+
+      if (bookData) {
+        isBookInFavorites(user.uid, bookData)
+          .then(isInFavorites => {
+            if (isInFavorites) {
+              console.log('El libro está en favoritos.');
+              deleteBookFav(user.uid, bookData);
+            } else {
+              console.log('El libro no está en favoritos.');
+              addBookFav(user.uid, bookData);
+            }
+          }).catch(error => {
+            console.error('Error verificando favoritos: ', error);
+          });
+      } else {
+        console.error('El libro no se encontró.');
+      }
+    } else {
+      alert('Regístrese/Inicie sesión para poder guardar libros favoritos.');
+    }
+  }
+});
+
+//Función buscar Libro Me Gusta
+const findBook = (id) => {
+  const bookFinded = arrayBackBooks.find(book => book.book_details[0].title === id);
+  return bookFinded;
+};
+
+//FUnción para buscar un libro en la base de datos de Firebase
+const isBookInFavorites = (userId, book) => {
+  const userRef = firebase.firestore().collection('users').doc(userId);
+
+  return userRef.get()
+    .then((doc) => {
+      if (doc.exists) {
+        const favorites = doc.data().favorites || [];
+        return favorites.some(favBook => favBook.book_details[0].title === book.book_details[0].title);
+      } else {
+        console.error('No se encontró el documento del usuario.');
+        return false;
+      }
+    })
+    .catch((error) => {
+      console.error(`Error ${error} al obtener el documento del usuario`);
+      throw error;
+    });
+}
+
+//Función para añadir libro a favoritos de Firebase
+const addBookFav = (uid, book) => {
+  db.collection('users').where('id', '==', uid)
+    .get()
+    .then((docs) => {
+      docs.forEach(async (doc) => {
+        const docID = doc.id;
+        const refUser = db.collection('users').doc(docID);
+
+        await refUser.update({ favorites: firebase.firestore.FieldValue.arrayUnion(book) })
+          .then(() => {
+            alert('Libro guardado en la colección de favoritos.')
+          })
+          .catch((error) => {
+            throw `Error ${error} al añadir el libro a la colección.`
+          })
+      })
+    })
+    .catch((error) => {
+      console.log(error)
+      alert(error)
+    })
+};
+
+//Función para eliminar libro a favoritos de Firebase
+const deleteBookFav = (uid, book) => {
+  db.collection('users').where('id', '==', uid)
+    .get()
+    .then((docs) => {
+      docs.forEach(async (doc) => {
+        const docID = doc.id;
+        const refUser = db.collection('users').doc(docID);
+
+        await refUser.update({ favorites: firebase.firestore.FieldValue.arrayRemove(book) })
+          .then(() => {
+            alert('Libro eliminado de la colección de favoritos.')
+          })
+          .catch((error) => {
+            throw `Error ${error} al eliminar el libro a la colección.`
+          })
+      })
+    })
+    .catch((error) => {
+      console.log(error)
+      alert(error)
+    })
+};
 
 // Listener de usuario en el sistema para controlar usuario logado
 firebase.auth().onAuthStateChanged((user) => {
@@ -284,12 +390,14 @@ firebase.auth().onAuthStateChanged((user) => {
   }
 });
 
+
+
+
 //FUNCIONES FIREBASE 
-//FUnción para crear usuario en Firebase Datastore
+//FUnción para crear usuario en Firebase Datastore con mismo ID que en Auth
 const createUser = (user) => {
-  db.collection("users")
-    .add(user)
-    .then((docRef) => console.log("Document written with ID: ", docRef.id))
+  db.collection("users").doc(user.uid)
+    .set(user)
     .catch((error) => console.error("Error adding document: ", error));
 };
 
@@ -306,7 +414,7 @@ const signUpUser = (email, password) => {
       // Saves user in firestore
       createUser({
         id: user.uid,
-        email: user.email,
+        email: user.email
       });
     })
     .catch((error) => {
@@ -328,13 +436,9 @@ const signInUser = (email, password) => {
       alert(`se ha logado ${user.email} ID:${user.uid}`)
       console.log("USER", user);
       const buttonMyProfile = document.createElement('BUTTON');
-      const sectionLogInButtons = document.querySelector('.loginButtons');
       buttonMyProfile.id = 'myProfileButton';
       buttonMyProfile.textContent = 'My profile';
-      sectionLogInButtons.append(buttonMyProfile);
-
-
-
+      document.querySelector('.loginButtons').append(buttonMyProfile);
     })
     .catch((error) => {
       alert('Est@ usuari@ no está registrad@ en el sistema. Complete el registro')
@@ -345,24 +449,44 @@ const signInUser = (email, password) => {
     });
 };
 
+//Función para editar datos de un usuario
+const readUser = (userID) => {
+  //Petición a Firestore para leer el documento del usuario y añadirle un valor
+  const idDOC = db.collection("users").doc();
+  console.log(idDOC)
+  idDOC.get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((document) => document.find((user) => user.id = userID))
+      console.log(querySnapshot);
+    })
+
+    .catch(() => console.log('Error reading documents'));;
+
+
+  // .then(() => console.log("Document successfully updated with favorite books!"))
+  //.catch((error) => console.log(`Error ${error} updating document`))
+};
+
 //Función para el logOut del usuario
 const signOut = () => {
   let user = firebase.auth().currentUser;
 
   firebase.auth().signOut()
-  .then(() => {
-    console.log("Sale del sistema: " + user.email)
-    const buttonMyProfile = document.querySelector('#myProfileButton');
-    buttonMyProfile.style.display = 'none';
-   
-  })
-  .catch((error) => {
-    console.log("hubo un error: " + error);
-  });
+    .then(() => {
+      console.log("Sale del sistema: " + user.email)
+      const buttonMyProfile = document.querySelector('#myProfileButton');
+      buttonMyProfile.style.display = 'none';
+
+    })
+    .catch((error) => {
+      console.log("hubo un error: " + error);
+    });
 };
 
 //Evento para el botón de LogOut
 document.querySelector("#logOut").addEventListener("click", signOut);
+
+
 
 
 
@@ -514,8 +638,9 @@ const pintarCardsTematicas = (datos) => {
     botonComprar.textContent = "BUY AT AMAZON";
 
     const favoriteButton = document.createElement("BUTTON");
-    favoriteButton.id = 'heart';
+    favoriteButton.id = detalles[0].title;
     favoriteButton.textContent = 'LIKE';
+    favoriteButton.classList = 'heartButton';
 
 
     enlaceBoton.append(botonComprar);
@@ -747,6 +872,7 @@ const mostrarSpinner = () => {
 const ocultarSpinner = () => {
   spinner.style.display = 'none';
 };
+
 
 //LLamada inicial a la APPI
 firstCall();
