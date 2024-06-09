@@ -23,20 +23,22 @@
         </section>
 
         <section class="sectionFormUser" id="formRegister">
-            <form id="formReg" action="#" method="POST">
-                <label for="email">Email:</label><br>
-                <input type="email" id="email" name="email" placeholder="Introduce email..."><br>
-                <label for="pass">Password:</label><br>
-                <input type="password" id="pass" name="pass" placeholder="Introduce password..."><br>
-                <label for="pass2">Repite password:</label><br>
-                <input type="password" id="pass2" name="pass2" placeholder="Repite password..."><br><br>
-                <button type="submit" value="submit" form="formReg">Register</button>
+            <div id="formRegContainer">
+                <form id="formReg" action="#" method="POST">
+                    <label for="email">Email:</label><br>
+                    <input type="email" id="email" name="email" placeholder="Introduce email..."><br>
+                    <label for="pass">Password:</label><br>
+                    <input type="password" id="pass" name="pass" placeholder="Introduce password..."><br>
+                    <label for="pass2">Repite password:</label><br>
+                    <input type="password" id="pass2" name="pass2" placeholder="Repite password..."><br><br>
+                    <button type="submit" value="submit" form="formReg">Register</button>
+                </form>
                 <button type="button" class="close" id="closeRegister">X</button>
-            </form>
+            </div>
         </section>
 
         <section class="sectionFormUser" id="formLogIn">
-            <div id="divFormAuth">
+            <div id="formAuthContainer">
                 <form id="formAuth" action="#" method="POST">
                     <label for="userEmail">Email:</label><br>
                     <input type="email" id="userEmail" name="userEmail" placeholder="Introduce email..."><br>
@@ -95,13 +97,15 @@
                 <option value="zToa">Z to A</option>
             </select>
             <div class="flex-container">
-            <input type="text" id="tituloLibro" name="tituloLibro" placeholder="find by title" maxlength="6" />
-            <button class="buttonTituloFilter" id="botonTituloFilter" name="botonTituloFilter">Find the book</button>
-            <input type="text" id="autorLibro" name="autorLibro" placeholder="find by author" maxlength="6" />
-            <button class="buttonAuthorFilter" id="botonAuthorFilter" name="botonAuthorFilter">Find by author</button>
+                <input type="text" id="tituloLibro" name="tituloLibro" placeholder="find by title" maxlength="6" />
+                <button class="buttonTituloFilter" id="botonTituloFilter" name="botonTituloFilter">Find the
+                    book</button>
+                <input type="text" id="autorLibro" name="autorLibro" placeholder="find by author" maxlength="6" />
+                <button class="buttonAuthorFilter" id="botonAuthorFilter" name="botonAuthorFilter">Find by
+                    author</button>
             </div>
             <div class="clear-button-container">
-            <button class="clearButton" id="clear" name="clear">Clear</button>
+                <button class="clearButton" id="clear" name="clear">Clear</button>
             </div>
         </section>
 
@@ -115,8 +119,8 @@
             <form id="ProfilePicForm">
                 <input type="file" id="profilePicInput" accept="image/*" />
                 <button type="submit">Upload/Update your photo</button>
-              </form>
-              <img id="profilePic" src="" alt="Profile Picture" />
+            </form>
+            <img id="profilePic" src="" alt="Profile Picture" />
         </section>
 
         <section id="cards">
@@ -140,7 +144,7 @@
 
     <!-- TODO: Add SDKs for Firebase products that you want to use
          https://firebase.google.com/docs/web/setup#available-libraries -->
-         
+
     <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-storage.js"></script>

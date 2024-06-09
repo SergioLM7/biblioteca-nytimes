@@ -32,7 +32,6 @@ const inputBookTitle = document.querySelector('#tituloLibro');
 const buttonFilterAuthor = document.querySelector('#botonAuthorFilter');
 const inputAuthorBook = document.querySelector('#autorLibro');
 const clearButton = document.querySelector('#clear');
-const pageInfo = document.getElementById('pageInfo');
 const botonLogIn = document.querySelector('#loginButton');
 const buttonLogClose = document.querySelector('#closeLogIn');
 const botonReg = document.querySelector('#registerButton');
@@ -80,14 +79,20 @@ let arrayFavorites = [];
 
 //Evento botón LogIn Popup
 botonLogIn.addEventListener('click', () => {
-  document.querySelector('.sectionFormUser').classList.add('show');
-
+  document.querySelector('#formLogIn').classList.add('show');
 });
 
 buttonLogClose.addEventListener('click', () => {
-  document.querySelector('.sectionFormUser').classList.remove('show');
+  document.querySelector('#formLogIn').classList.remove('show');
+});
 
+//Evento botón Register Popup
+botonReg.addEventListener('click', () => {
+  document.querySelector('#formRegister').classList.add('show');
+});
 
+buttonRegClose.addEventListener('click', () => {
+  document.querySelector('#formRegister').classList.remove('show');
 });
 
 //Evento para acceder al género de los libros
