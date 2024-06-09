@@ -32,8 +32,6 @@ const inputBookTitle = document.querySelector('#tituloLibro');
 const buttonFilterAuthor = document.querySelector('#botonAuthorFilter');
 const inputAuthorBook = document.querySelector('#autorLibro');
 const clearButton = document.querySelector('#clear');
-const buttonPrevPage = document.getElementById('prevPage');
-const buttonNextPage = document.getElementById('nextPage');
 const pageInfo = document.getElementById('pageInfo');
 const botonLogIn = document.querySelector('#loginButton');
 const buttonLogClose = document.querySelector('#closeLogIn');
@@ -246,6 +244,8 @@ sectionBoton.addEventListener('click', ({ target }) => {
     console.log(arrayBack)
     pintarCards(arrayBack);
     sectionFilters.style.display = 'flex';
+    document.getElementById('profilePic').style.display = 'none';
+    document.getElementById('sectionPicProfile').style.display = 'none';
     cleanDOM(sectionBoton);
   }
 });
@@ -255,10 +255,13 @@ clearButton.addEventListener('click', () => {
   clearBookSection();
 });
 
+
 //Evento botón MyProfile
 document.querySelector('.loginButtons').addEventListener('click', (event) => {
   if (event.target.matches('#myProfileButton')) {
     const user = firebase.auth().currentUser;
+    document.getElementById('sectionPicProfile').style.display = 'block';
+    document.getElementById('profilePic').style.display = 'block';
     checkFavorites(user.uid)
       .then(favoritesNoEmpty => {
         if (favoritesNoEmpty) {
@@ -270,6 +273,8 @@ document.querySelector('.loginButtons').addEventListener('click', (event) => {
                 sectionFilters.style.display = 'none';
                 pintarCardsTematicas(favoriteGetted);
                 sectionTituloLista.innerHTML = 'My profile';
+                document.querySelector('.heartButton').style.display = 'none';
+                document.getElementById('booksFilters').style.display = 'none';
 
               } else {
                 console.log('No se obtuvieron favoritos.');
@@ -288,23 +293,7 @@ document.querySelector('.loginButtons').addEventListener('click', (event) => {
 
 })
 
-//Función para recuperar los datos en favorite
-const getFavorite = (userID) => {
-  const userRef = firebase.firestore().collection('users').doc(userID);
 
-  return userRef.get().then((doc) => {
-    if (doc.exists) {
-      const favorites = doc.data().favorites || [];
-      return favorites; // Devuelve los favoritos como array
-    } else {
-      console.error('No se encontró el documento del usuario.');
-      return [];
-    }
-  }).catch((error) => {
-    console.error('Error obteniendo el documento del usuario: ', error);
-    throw error;
-  })
-};
 
 //EVENTOS FIREBASE 
 //Evento para modificar la persistencia del Log In.
@@ -364,6 +353,186 @@ sectionCards.addEventListener('click', (event) => {
     }
   }
 });
+
+// Evento para el formulario de subida de la imagen de Perfil
+document.getElementById('ProfilePicForm').addEventListener('submit', (event) => {
+  event.preventDefault();
+  const file = document.getElementById('profilePicInput').files[0];
+  if (file) {
+    uploadProfilePic(file);
+  }
+});
+
+
+// Listener de usuario en el sistema para controlar usuario logado
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    console.log(`Está en el sistema:${user.email} ${user.uid}`);
+    document.getElementById("message").innerText = `${user.email} está en el sistema`;
+    const userRef = firebase.firestore().collection('users').doc(user.uid);
+    userRef.get()
+      .then((doc) => {
+        if (doc.exists) {
+          const profilePicURL = doc.data().profilePicURL;
+          if (profilePicURL) {
+            displayProfilePic(profilePicURL);
+          } else {
+            console.log('El usuario no tiene una imagen de perfil.');
+          }
+        } else {
+          console.log('No se encontró el documento del usuario.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error obteniendo el documento del usuario: ', error);
+      });
+  } else {
+    console.log("no hay usuarios en el sistema");
+    document.getElementById("message").innerText = `No hay usuarios en el sistema`;
+  }
+});
+
+
+
+
+//FUNCIONES FIREBASE 
+//FUnción para crear usuario en Firebase Datastore con mismo ID que en Auth
+const createUser = (user) => {
+  db.collection("users").doc(user.uid)
+    .set(user)
+    .catch((error) => console.error("Error adding document: ", error));
+};
+
+//Función para el register del usuario
+const signUpUser = (email, password) => {
+  firebase
+    .auth()
+    .createUserWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      // Signed in
+      let user = userCredential.user;
+      console.log(`se ha registrado ${user.email} ID:${user.uid}`);
+      alert(`El usuario ${user.email} con ID:${user.uid} está registrado`);
+      // Saves user in firestore
+      createUser({
+        id: user.uid,
+        email: user.email
+      });
+    })
+    .catch((error) => {
+      console.log("Error en el sistema" + ' ' + error.message, "Error: " + error.code);
+      if (error.code === 'auth/email-already-in-use') {
+        alert('Este email ya está registrado.');
+      }
+    });
+};
+
+//Función para recuperar los datos en favorite
+const getFavorite = (userID) => {
+  const userRef = firebase.firestore().collection('users').doc(userID);
+
+  return userRef.get().then((doc) => {
+    if (doc.exists) {
+      const favorites = doc.data().favorites || [];
+      return favorites; // Devuelve los favoritos como array
+    } else {
+      console.error('No se encontró el documento del usuario.');
+      return [];
+    }
+  }).catch((error) => {
+    console.error('Error obteniendo el documento del usuario: ', error);
+    throw error;
+  })
+};
+
+//Función para el logIN del usuario
+const signInUser = (email, password) => {
+  firebase.auth().signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      // Signed in
+      let user = userCredential.user;
+      console.log(`se ha logado ${user.email} ID:${user.uid}`)
+      alert(`se ha logado ${user.email} ID:${user.uid}`)
+      console.log("USER", user);
+      const buttonMyProfile = document.createElement('BUTTON');
+      buttonMyProfile.id = 'myProfileButton';
+      buttonMyProfile.textContent = 'My profile';
+      document.querySelector('.loginButtons').append(buttonMyProfile);
+    })
+    .catch((error) => {
+      alert('Est@ usuari@ no está registrad@ en el sistema. Complete el registro')
+      let errorCode = error.code;
+      let errorMessage = error.message;
+      console.log(errorCode)
+      console.log(errorMessage)
+    });
+};
+
+//Función para el logOut del usuario
+const signOut = () => {
+  let user = firebase.auth().currentUser;
+
+  firebase.auth().signOut()
+    .then(() => {
+      alert(`${user.email} cerró sesión.`)
+    })
+    .catch((error) => {
+      console.log("hubo un error: " + error);
+    });
+};
+
+//Evento para el botón de LogOut
+document.querySelector("#logOut").addEventListener("click", signOut);
+
+//Función para subir la foto de perfil al Cloud Storage
+const uploadProfilePic = (file) => {
+  const user = firebase.auth().currentUser;
+
+  if (user) {
+    const storageRef = firebase.storage().ref();
+    const profilePicRef = storageRef.child(`profile_pics/${user.uid}/${file.name}`);
+    const uploadTask = profilePicRef.put(file);
+
+    uploadTask.on('state_changed', 
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log('Upload is ' + progress + '% done');
+      }, 
+      (error) => {
+        console.error('Error al subir la imagen: ', error);
+      }, 
+      () => {
+        uploadTask.snapshot.ref.getDownloadURL()
+        .then((downloadURL) => {
+          console.log('URL de descarga de la imagen: ', downloadURL);
+          updateProfilePicURL(user.uid, downloadURL);
+        });
+      }
+    );
+  } else {
+    console.log('No hay usuario autenticado.');
+  }
+};
+
+
+//Función para actualizar el perfil de usuario con la URL de la imagen subida
+const updateProfilePicURL = (userID, url) => {
+  const userRef = firebase.firestore().collection('users').doc(userID);
+
+  userRef.update({ profilePicURL: url })
+    .then(() => {
+      console.log('URL de la imagen de perfil actualizada en Firestore.');
+      displayProfilePic(url);
+    })
+    .catch((error) => {
+      console.error('Error actualizando la URL de la imagen de perfil: ', error);
+    });
+};
+
+//Función para pintar la imagen de perfil en el DOM
+const displayProfilePic = (url) => {
+  document.getElementById('profilePic').src = url;
+};
 
 //Función buscar Libro Me Gusta
 const findBook = (id) => {
@@ -464,94 +633,6 @@ const deleteBookFav = (uid, book) => {
     })
 };
 
-// Listener de usuario en el sistema para controlar usuario logado
-firebase.auth().onAuthStateChanged((user) => {
-  if (user) {
-    console.log(`Está en el sistema:${user.email} ${user.uid}`);
-    document.getElementById("message").innerText = `${user.email} está en el sistema`;
-  } else {
-    console.log("no hay usuarios en el sistema");
-    document.getElementById("message").innerText = `No hay usuarios en el sistema`;
-  }
-});
-
-
-
-
-//FUNCIONES FIREBASE 
-//FUnción para crear usuario en Firebase Datastore con mismo ID que en Auth
-const createUser = (user) => {
-  db.collection("users").doc(user.uid)
-    .set(user)
-    .catch((error) => console.error("Error adding document: ", error));
-};
-
-//Función para el register del usuario
-const signUpUser = (email, password) => {
-  firebase
-    .auth()
-    .createUserWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-      // Signed in
-      let user = userCredential.user;
-      console.log(`se ha registrado ${user.email} ID:${user.uid}`);
-      alert(`El usuario ${user.email} con ID:${user.uid} está registrado`);
-      // Saves user in firestore
-      createUser({
-        id: user.uid,
-        email: user.email
-      });
-    })
-    .catch((error) => {
-      console.log("Error en el sistema" + ' ' + error.message, "Error: " + error.code);
-      if (error.code === 'auth/email-already-in-use') {
-        alert('Este email ya está registrado.');
-      }
-    });
-};
-
-
-//Función para el logIN del usuario
-const signInUser = (email, password) => {
-  firebase.auth().signInWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-      // Signed in
-      let user = userCredential.user;
-      console.log(`se ha logado ${user.email} ID:${user.uid}`)
-      alert(`se ha logado ${user.email} ID:${user.uid}`)
-      console.log("USER", user);
-      const buttonMyProfile = document.createElement('BUTTON');
-      buttonMyProfile.id = 'myProfileButton';
-      buttonMyProfile.textContent = 'My profile';
-      document.querySelector('.loginButtons').append(buttonMyProfile);
-    })
-    .catch((error) => {
-      alert('Est@ usuari@ no está registrad@ en el sistema. Complete el registro')
-      let errorCode = error.code;
-      let errorMessage = error.message;
-      console.log(errorCode)
-      console.log(errorMessage)
-    });
-};
-
-//Función para el logOut del usuario
-const signOut = () => {
-  let user = firebase.auth().currentUser;
-
-  firebase.auth().signOut()
-    .then(() => {
-      alert(`${user.email} cerró sesión.`)
-    })
-    .catch((error) => {
-      console.log("hubo un error: " + error);
-    });
-};
-
-//Evento para el botón de LogOut
-document.querySelector("#logOut").addEventListener("click", signOut);
-
-
-
 
 
 //FUNCIONES
@@ -585,7 +666,6 @@ const firstCall = async () => {
     console.log(categoriesToPrint)
     sectionFilters.style.display = 'flex';
     sectionBooksFilters.style.display = 'none';
-    hidePageButtons();
     pintarCards(categoriesToPrint);
     toLocalStorage(categoriesToPrint);
     ocultarSpinner();
@@ -594,7 +674,6 @@ const firstCall = async () => {
   } else {
     sectionFilters.style.display = 'flex';
     sectionBooksFilters.style.display = 'none';
-    hidePageButtons();
     pintarCards(arrayBack);
   };
 };
@@ -893,7 +972,7 @@ const filterAlphabeticalAuthors = (value) => {
 
 //PAGINACIÓN (NO IMPLEMENTADA)
 // Función para actualizar la información de la página y los botones de navegación
-const updatePaginationControls = (totalItems) => {
+/*const updatePaginationControls = (totalItems) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
   buttonPrevPage.disabled = currentPage === 1;
@@ -924,7 +1003,7 @@ const pagReset = (array) => {
 const hidePageButtons = () => {
   buttonPrevPage.style.display = 'none'
   buttonNextPage.style.display = 'none'
-};
+};*/
 
 //SPINNER
 //Función para mostrar el spinner de carga
