@@ -267,6 +267,12 @@ document.querySelector('.loginButtons').addEventListener('click', (event) => {
     const user = firebase.auth().currentUser;
     document.getElementById('sectionPicProfile').style.display = 'block';
     document.getElementById('profilePic').style.display = 'block';
+
+    const botonBack = document.createElement('BUTTON');
+    botonBack.classList = "botonBack";
+    botonBack.textContent = "BACK TO INDEX";
+    sectionBoton.append(botonBack);
+
     checkFavorites(user.uid)
       .then(favoritesNoEmpty => {
         if (favoritesNoEmpty) {
@@ -276,10 +282,12 @@ document.querySelector('.loginButtons').addEventListener('click', (event) => {
               if (favoriteGetted && favoriteGetted.length > 0) {
                 cleanDOM(sectionBoton);
                 sectionFilters.style.display = 'none';
+                cleanDOM(botonBack);
                 pintarCardsTematicas(favoriteGetted);
                 sectionTituloLista.innerHTML = 'My profile';
-                document.querySelector('.heartButton').style.display = 'none';
                 document.getElementById('booksFilters').style.display = 'none';
+                document.getElementById('filters').style.display = 'none';
+
 
               } else {
                 console.log('No se obtuvieron favoritos.');
@@ -316,7 +324,7 @@ document.querySelector("#formReg").addEventListener("submit", (event) => {
   let email = event.target.elements.email.value;
   let pass = event.target.elements.pass.value;
   let pass2 = event.target.elements.pass2.value;
-
+  document.querySelector('#formRegister').classList.remove('show');
   pass === pass2 ? signUpUser(email, pass) : alert("error password");
 });
 
@@ -402,10 +410,13 @@ firebase.auth().onAuthStateChanged((user) => {
 
 //FUNCIONES FIREBASE 
 //FUnción para crear usuario en Firebase Datastore con mismo ID que en Auth
-const createUser = (user) => {
-  db.collection("users").doc(user.uid)
-    .set(user)
-    .catch((error) => console.error("Error adding document: ", error));
+const createUser = async (user) => {
+  try {
+    await db.collection("users").doc(user.id).set(user);
+    console.log("Document successfully written!");
+  } catch (error) {
+    console.error("Error adding document: ", error);
+  }
 };
 
 //Función para el register del usuario
@@ -423,6 +434,10 @@ const signUpUser = (email, password) => {
         id: user.uid,
         email: user.email
       });
+      const buttonMyProfile = document.createElement('BUTTON');
+      buttonMyProfile.id = 'myProfileButton';
+      buttonMyProfile.textContent = 'My profile';
+      document.querySelector('.loginButtons').append(buttonMyProfile);
     })
     .catch((error) => {
       console.log("Error en el sistema" + ' ' + error.message, "Error: " + error.code);
@@ -459,6 +474,8 @@ const signInUser = (email, password) => {
       console.log(`se ha logado ${user.email} ID:${user.uid}`)
       alert(`se ha logado ${user.email} ID:${user.uid}`)
       console.log("USER", user);
+      document.querySelector('#formLogIn').classList.remove('show');
+
       const buttonMyProfile = document.createElement('BUTTON');
       buttonMyProfile.id = 'myProfileButton';
       buttonMyProfile.textContent = 'My profile';
@@ -480,6 +497,9 @@ const signOut = () => {
   firebase.auth().signOut()
     .then(() => {
       alert(`${user.email} cerró sesión.`)
+      location.reload();
+      window.scrollTo(0, 0);
+
     })
     .catch((error) => {
       console.log("hubo un error: " + error);
@@ -498,20 +518,20 @@ const uploadProfilePic = (file) => {
     const profilePicRef = storageRef.child(`profile_pics/${user.uid}/${file.name}`);
     const uploadTask = profilePicRef.put(file);
 
-    uploadTask.on('state_changed', 
+    uploadTask.on('state_changed',
       (snapshot) => {
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         console.log('Upload is ' + progress + '% done');
-      }, 
+      },
       (error) => {
         console.error('Error al subir la imagen: ', error);
-      }, 
+      },
       () => {
         uploadTask.snapshot.ref.getDownloadURL()
-        .then((downloadURL) => {
-          console.log('URL de descarga de la imagen: ', downloadURL);
-          updateProfilePicURL(user.uid, downloadURL);
-        });
+          .then((downloadURL) => {
+            console.log('URL de descarga de la imagen: ', downloadURL);
+            updateProfilePicURL(user.uid, downloadURL);
+          });
       }
     );
   } else {
