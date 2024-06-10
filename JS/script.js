@@ -687,6 +687,7 @@ const firstCall = async () => {
     sectionFilters.style.display = 'flex';
     sectionBooksFilters.style.display = 'none';
     pintarCards(categoriesToPrint);
+    cleanDOM(sectionBoton);
     toLocalStorage(categoriesToPrint);
     ocultarSpinner();
 
@@ -695,6 +696,7 @@ const firstCall = async () => {
     sectionFilters.style.display = 'flex';
     sectionBooksFilters.style.display = 'none';
     pintarCards(arrayBack);
+    cleanDOM(sectionBoton);
   };
 };
 
@@ -728,6 +730,11 @@ const accesoAPILista2 = async (link) => {
 
 //Función para pintar las listas
 const pintarCards = (datos) => {
+  const sectionBoton = document.querySelector('#sectionBoton');
+  const botonBack = document.createElement('BUTTON');
+  botonBack.classList = "botonBack";
+  botonBack.textContent = "BACK TO INDEX";
+  sectionBoton.append(botonBack);
 
   datos.forEach(({ list_name: nombre, oldest_published_date: masAntiguo,
     newest_published_date: masNuevo, updated, list_name_encoded: link }) => {
