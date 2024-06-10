@@ -59,7 +59,7 @@ header {
     padding: 16px;
     text-align: center;
     background-color: #0056b3;
-    background-image: url('images/background-imageOK.jpg');
+    background-image: url('./images/background-imageOK.jpg');
 
   }
   
