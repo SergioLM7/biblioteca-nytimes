@@ -58,7 +58,7 @@ header {
     width: 100%;
     padding: 16px;
     text-align: center;
-    background-image: url('../images/background-imageOK.jpg');
+    background-image: url('/background-imageOK.jpg');
     background-color: #0056b3;
   }
   
