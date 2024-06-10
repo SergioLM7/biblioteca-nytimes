@@ -58,7 +58,7 @@ header {
     width: 100%;
     padding: 16px;
     text-align: center;
-    background-image: url('/background-imageOK.jpg');
+    background-image: url('../images/background-imageOK.jpg');
     background-color: #0056b3;
   }
   
@@ -149,6 +149,26 @@ label, select, input, button {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+}
+
+.loginButtons {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+#loginButton, #registerButton, #myProfileButton {
+    background-color: #ec870b;
+    border-radius: 5px;
+    font-weight: bolder;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 50%;
+
+}
+
+#loginButton:hover, #registerButton:hover, #myProfileButton:hover {
+    background-color: #dd762c;
 }
 
 
@@ -420,3 +440,12 @@ label, select, input, button {
   #profilePic {
     max-width: 150px;
   }
+
+  #footer {
+    background-color: #333; 
+    color: #fff; 
+    text-align: center; 
+    padding: 20px;
+    bottom: 0;
+    width: 100%;
+}
