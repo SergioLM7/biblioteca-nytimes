@@ -37,8 +37,7 @@ const buttonLogClose = document.querySelector('#closeLogIn');
 const botonReg = document.querySelector('#registerButton');
 const buttonRegClose = document.querySelector('#closeRegister');
 
-const itemsPerPage = 5;
-
+//const itemsPerPage = 5;
 //let activeArray; Esta variable puede cambiarse a 'arrayBackBooks' según el array activo
 let currentPage = 1;
 let botonCard;
@@ -74,8 +73,6 @@ let arrayFavorites = [];
     }
   }
 });*/
-
-
 
 //Evento botón LogIn Popup
 botonLogIn.addEventListener('click', () => {
@@ -304,9 +301,7 @@ document.querySelector('.loginButtons').addEventListener('click', (event) => {
 
   }
 
-})
-
-
+});
 
 //EVENTOS FIREBASE 
 //Evento para modificar la persistencia del Log In.
