@@ -1,5 +1,5 @@
 //VARIABLES
-// Your web app's Firebase configuration
+//Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCw6W16ItqmffU-peo3y6rM8lwWmsZ7B8k",
   authDomain: "fir-firebase-7e96e.firebaseapp.com",
@@ -9,11 +9,9 @@ const firebaseConfig = {
   appId: "1:467507857731:web:0bf3d319532aff9fc847f6"
 };
 
+firebase.initializeApp(firebaseConfig);// Inicializar app Firebase
 
-firebase.initializeApp(firebaseConfig);// Inicializaar app Firebase
-
-const db = firebase.firestore();// db representa mi BBDD //inicia Firestore
-
+const db = firebase.firestore(); //inicio Firestore
 
 const fragment = document.createDocumentFragment();
 const sectionCards = document.querySelector('#cards');
@@ -74,20 +72,22 @@ let arrayFavorites = [];
   }
 });*/
 
-//Evento botón LogIn Popup
+//Evento botón LogIn Popup Open
 botonLogIn.addEventListener('click', () => {
   document.querySelector('#formLogIn').classList.add('show');
 });
 
+//Evento botón LogIn Popup Close
 buttonLogClose.addEventListener('click', () => {
   document.querySelector('#formLogIn').classList.remove('show');
 });
 
-//Evento botón Register Popup
+//Evento botón Register Popup Open
 botonReg.addEventListener('click', () => {
   document.querySelector('#formRegister').classList.add('show');
 });
 
+//Evento botón Register Popup Close
 buttonRegClose.addEventListener('click', () => {
   document.querySelector('#formRegister').classList.remove('show');
 });
@@ -99,10 +99,11 @@ sectionCards.addEventListener('click', async ({ target }) => {
     const linkURL = target.dataset.link;
     mostrarSpinner();
     const toPrint = await accesoAPILista2(linkURL);
-    sectionFilters.style.display = 'none';
-    sectionBooksFilters.style.display = 'flex';
+    sectionFilters.classList.add('hidden');
+    sectionBooksFilters.classList.remove('hidden');
     cleanDOM(sectionCards);
     pintarCardsTematicas(toPrint);
+    console.log(toPrint);
     ocultarSpinner();
   }
 });
@@ -162,10 +163,12 @@ botonFilterCategories.addEventListener('click', () => {
   }
   if (arraySelectedOptions.includes('Todas')) {
     cleanDOM(sectionCards);
+    cleanDOM(sectionBoton);
     pintarCards(arrayBack);
   } else {
     let arrayFiltrado = arrayBack.filter(elemento => arraySelectedOptions.includes(elemento.list_name));
     cleanDOM(sectionCards);
+    cleanDOM(sectionBoton);
     pintarCards(arrayFiltrado);
   }
   resetSelects();
@@ -242,12 +245,11 @@ sectionBoton.addEventListener('click', ({ target }) => {
   if (target.classList.contains('botonBack')) {
     cleanDOM(sectionCards);
     cleanDOM(sectionTituloLista);
-    sectionBooksFilters.style.display = 'none';
+    sectionBooksFilters.classList.add('hidden');
+    document.getElementById('sectionPicProfile').classList.add('hidden');
     console.log(arrayBack)
     pintarCards(arrayBack);
-    sectionFilters.style.display = 'flex';
-    document.getElementById('profilePic').style.display = 'none';
-    document.getElementById('sectionPicProfile').style.display = 'none';
+    sectionFilters.classList.remove('hidden');
     cleanDOM(sectionBoton);
   }
 });
@@ -262,8 +264,10 @@ clearButton.addEventListener('click', () => {
 document.querySelector('.loginButtons').addEventListener('click', (event) => {
   if (event.target.matches('#myProfileButton')) {
     const user = firebase.auth().currentUser;
-    document.getElementById('sectionPicProfile').style.display = 'block';
-    document.getElementById('profilePic').style.display = 'block';
+
+    document.getElementById('sectionPicProfile').classList.remove('hidden');
+    sectionFilters.classList.add('hidden');
+    sectionBooksFilters.classList.add('hidden');
 
     const botonBack = document.createElement('BUTTON');
     botonBack.classList = "botonBack";
@@ -278,16 +282,10 @@ document.querySelector('.loginButtons').addEventListener('click', (event) => {
             .then(favoriteGetted => {
               if (favoriteGetted && favoriteGetted.length > 0) {
                 cleanDOM(sectionBoton);
-                sectionFilters.style.display = 'none';
-                cleanDOM(botonBack);
-                pintarCardsTematicas(favoriteGetted);
-                sectionTituloLista.innerHTML = 'My profile';
-                document.getElementById('booksFilters').style.display = 'none';
-                document.getElementById('filters').style.display = 'none';
-
-
+                pintarCardsTematicas(favoriteGetted, false);
               } else {
                 console.log('No se obtuvieron favoritos.');
+                sectionCards.innerHTML = '<p>No tienes ningún libro marcado como favorito.</p>';
               }
             })
             .catch(error => console.log('Error imprimiendo favoritos ' + error))
@@ -298,9 +296,7 @@ document.querySelector('.loginButtons').addEventListener('click', (event) => {
       .catch(error => {
         console.error('Error verificando favoritos: ', error);
       });
-
   }
-
 });
 
 //EVENTOS FIREBASE 
@@ -332,30 +328,47 @@ document.querySelector("#formAuth").addEventListener("submit", (event) => {
 });
 
 //Listener del botón Me Gusta
-sectionCards.addEventListener('click', (event) => {
+sectionCards.addEventListener('click', async (event) => {
   if (event.target.matches('.heartButton')) {
     const user = firebase.auth().currentUser;
+    const bookID = event.target.id;
+    console.log(bookID)
 
     if (user) {
-      const bookID = event.target.id;
-      const bookData = findBook(bookID);
+      try {
+        let bookData = await findBook(user.uid, bookID);
 
-      if (bookData) {
-        isBookInFavorites(user.uid, bookData)
-          .then(isInFavorites => {
-            if (isInFavorites) {
-              console.log('El libro está en favoritos.');
-              deleteBookFav(user.uid, bookData);
-            } else {
-              console.log('El libro no está en favoritos.');
-              addBookFav(user.uid, bookData);
-            }
-          }).catch(error => {
-            console.error('Error verificando favoritos: ', error);
-          });
-      } else {
-        console.error('El libro no se encontró.');
+        // Si bookData es null, buscar en arrayBackBooks
+        if (!bookData) {
+          const foundBookArrayBack = arrayBackBooks.find(book => book.book_details[0].title === bookID);
+          bookData = foundBookArrayBack;
+          console.log(bookData);
+          console.log('El libro no está en favoritos.');
+          await addBookFav(user.uid, bookData);
+          event.target.classList.add('liked');
+          event.target.innerHTML = '&#9829;'; // Corazón relleno
+
+        } else {
+          const isInFavorites = await isBookInFavorites(user.uid, bookData);
+
+          if (isInFavorites) {
+            console.log('El libro ya estaba en favoritos.');
+            await deleteBookFav(user.uid, bookData);
+            event.target.classList.remove('liked');
+            event.target.innerHTML = '&#9825;'; // Corazón vacío
+          } else {
+            console.log('El libro no está en favoritos.');
+            await addBookFav(user.uid, bookData);
+            event.target.classList.add('liked');
+            event.target.innerHTML = '&#9829;'; // Corazón relleno
+          }
+
+        }
+
+      } catch (error) {
+        console.error('Error manejando favoritos: ', error);
       }
+
     } else {
       alert('Regístrese/Inicie sesión para poder guardar libros favoritos.');
     }
@@ -377,6 +390,7 @@ firebase.auth().onAuthStateChanged((user) => {
   if (user) {
     console.log(`Está en el sistema:${user.email} ${user.uid}`);
     document.getElementById("message").innerText = `${user.email} está en el sistema`;
+
     const userRef = firebase.firestore().collection('users').doc(user.uid);
     userRef.get()
       .then((doc) => {
@@ -446,18 +460,20 @@ const signUpUser = (email, password) => {
 const getFavorite = (userID) => {
   const userRef = firebase.firestore().collection('users').doc(userID);
 
-  return userRef.get().then((doc) => {
-    if (doc.exists) {
-      const favorites = doc.data().favorites || [];
-      return favorites; // Devuelve los favoritos como array
-    } else {
-      console.error('No se encontró el documento del usuario.');
-      return [];
-    }
-  }).catch((error) => {
-    console.error('Error obteniendo el documento del usuario: ', error);
-    throw error;
-  })
+  return userRef.get()
+    .then((doc) => {
+      if (doc.exists) {
+        const favorites = doc.data().favorites || [];
+        return favorites; // Devuelve los favoritos como array
+      } else {
+        console.error('No se encontró el documento del usuario.');
+        return [];
+      }
+    })
+    .catch((error) => {
+      console.error('Error obteniendo el documento del usuario: ', error);
+      throw error;
+    })
 };
 
 //Función para el logIN del usuario
@@ -555,12 +571,32 @@ const displayProfilePic = (url) => {
 };
 
 //Función buscar Libro Me Gusta
-const findBook = (id) => {
-  const bookFinded = arrayBackBooks.find(book => book.book_details[0].title === id);
-  return bookFinded;
+const findBook = async (userID, bookID) => {
+  //const bookFinded = arrayBackBooks.find(book => book.book_details[0].title === id);
+  //return bookFinded;
+
+  try {
+    const userRef = firebase.firestore().collection('users').doc(userID);
+    const doc = await userRef.get();
+
+    if (doc.exists) {
+      const favorites = await doc.data().favorites || [];
+
+      if (favorites.length <= 0) {
+        console.error('No hay favoritos guardados.');
+        return null; // Devuelve null si no hay ningún favorito guardado
+      } else {
+        const foundBook = favorites.find(book => book.book_details[0].title === bookID);
+        return foundBook; // Devuelve el libro encontrado 
+      }
+    }
+  } catch (error) {
+    console.error(`Error al obtener el documento del usuario: ${error}`);
+    throw error; // Lanza el error para manejarlo en un nivel superior si es necesario
+  }
 };
 
-//FUnción para buscar si un libro esta en la base de datos de Firebase
+//Función para buscar si un libro está en la base de datos de Firebase
 const isBookInFavorites = (userID, book) => {
   const userRef = firebase.firestore().collection('users').doc(userID);
 
@@ -653,6 +689,25 @@ const deleteBookFav = (uid, book) => {
     })
 };
 
+//Función para rellenar los botones de me gusta desde Firebase cuando el usuario inicie sesión
+const loadUserFavorites = async (userId) => {
+  try {
+    const userDoc = await db.collection('users').doc(userId).get();
+    if (userDoc.exists) {
+      const favorites = userDoc.data().favorites || [];
+      favorites.forEach(book => {
+        const heartButton = document.getElementById(book.id);
+        if (heartButton) {
+          heartButton.classList.add('liked');
+          heartButton.innerHTML = '&#9829;'; // Corazón relleno
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Error cargando favoritos del usuario: ', error);
+  }
+};
+
 
 
 //FUNCIONES
@@ -667,9 +722,6 @@ const accesoAPI = async () => {
     } else {
       let respuestaOK = await respuesta.json();
       let listasAPintar = respuestaOK.body.results;
-      //arrayBack = listasAPintar;
-      //localStorage.setItem('arrayBack', JSON.stringify(listasAPintar));
-      //pintarCards(listasAPintar);
       return listasAPintar;
     }
   } catch (error) {
@@ -684,8 +736,8 @@ const firstCall = async () => {
     mostrarSpinner();
     const categoriesToPrint = await accesoAPI();
     console.log(categoriesToPrint)
-    sectionFilters.style.display = 'flex';
-    sectionBooksFilters.style.display = 'none';
+    sectionFilters.classList.remove('hidden');
+    sectionBooksFilters.classList.add('hidden');
     pintarCards(categoriesToPrint);
     cleanDOM(sectionBoton);
     toLocalStorage(categoriesToPrint);
@@ -693,8 +745,8 @@ const firstCall = async () => {
 
 
   } else {
-    sectionFilters.style.display = 'flex';
-    sectionBooksFilters.style.display = 'none';
+    sectionFilters.classList.remove('hidden');
+    sectionBooksFilters.classList.add('hidden');
     pintarCards(arrayBack);
     cleanDOM(sectionBoton);
   };
@@ -768,7 +820,7 @@ const pintarCards = (datos) => {
 };
 
 //Función para pintar las cards de cada género/temática
-const pintarCardsTematicas = (datos) => {
+const pintarCardsTematicas = (datos, addTitle = true) => {
   window.scrollTo(0, 0);
 
   const sectionTituloLista = document.querySelector('#sectionTituloLista');
@@ -778,48 +830,117 @@ const pintarCardsTematicas = (datos) => {
   botonBack.textContent = "BACK TO INDEX";
   sectionBoton.append(botonBack);
 
+  //Comprobar si el usuario está logueado
+  const user = firebase.auth().currentUser;
 
-  datos.forEach(({ list_name, rank, weeks_on_list: semanas, book_details: detalles }) => {
-    sectionTituloLista.innerHTML = '';
-    const titulo = detalles[0].title;
-    const contenedorLibro = document.createElement("ARTICLE");
-    const tituloLista = document.createElement("H3");
-    tituloLista.textContent = list_name;
+  if (user) {
+    // Obtener favoritos del usuario logueado
+    getFavorite(user.uid)
+      .then(favorites => {
+        const favoriteTitles = favorites.map(book => book.book_details[0].title);
 
-    contenedorLibro.classList = "contenedorLibro";
-    const h4Libro = document.createElement("H4");
-    h4Libro.innerHTML = `#${rank} ${titulo}`;
+        datos.forEach(({ list_name, rank, weeks_on_list: semanas, book_details: detalles }) => {
+          cleanDOM(sectionTituloLista);
+          const titulo = detalles[0].title;
+          const contenedorLibro = document.createElement("ARTICLE");
 
-    const imgLibro = document.createElement("IMG");
-    imgLibro.src = detalles[0].book_image;
-    imgLibro.classList = "contenedor-imagen";
-    imgLibro.alt = "caratula libro";
+          // Agregar el título si addTitle es true
+          if (addTitle) {
+            const tituloLista = document.createElement("H3");
+            tituloLista.textContent = list_name;
+            sectionTituloLista.append(tituloLista);
+          } else {
+            const profileTitle = document.createElement("H3");
+            profileTitle.textContent = "My Profile";
+            sectionTituloLista.append(profileTitle);
+          }
 
-    const semanasEnLista = document.createElement("P");
-    semanasEnLista.textContent = `Weeks on list: ${semanas}`;
+          contenedorLibro.classList = "contenedorLibro";
+          const h4Libro = document.createElement("H4");
+          h4Libro.innerHTML = `#${rank} ${titulo}`;
 
-    const description = document.createElement("P");
-    description.textContent = `${detalles[0].description}`;
+          const imgLibro = document.createElement("IMG");
+          imgLibro.src = detalles[0].book_image;
+          imgLibro.classList = "contenedor-imagen";
+          imgLibro.alt = "caratula libro";
 
-    const enlaceBoton = document.createElement("A");
-    enlaceBoton.href = `${detalles[0].amazon_product_url}`;
-    enlaceBoton.target = "_blank";
-    const botonComprar = document.createElement("BUTTON");
-    botonComprar.textContent = "BUY AT AMAZON";
+          const semanasEnLista = document.createElement("P");
+          semanasEnLista.textContent = `Weeks on list: ${semanas}`;
 
-    const favoriteButton = document.createElement("BUTTON");
-    favoriteButton.id = detalles[0].title;
-    favoriteButton.textContent = 'LIKE';
-    favoriteButton.classList = 'heartButton';
+          const description = document.createElement("P");
+          description.textContent = `${detalles[0].description}`;
 
+          const enlaceBoton = document.createElement("A");
+          enlaceBoton.href = `${detalles[0].amazon_product_url}`;
+          enlaceBoton.target = "_blank";
+          const botonComprar = document.createElement("BUTTON");
+          botonComprar.textContent = "BUY AT AMAZON";
 
-    enlaceBoton.append(botonComprar);
-    fragment.append(h4Libro, imgLibro, semanasEnLista, description, enlaceBoton, favoriteButton)
-    contenedorLibro.append(fragment);
-    sectionCards.append(contenedorLibro);
-    sectionTituloLista.append(tituloLista);
-  })
+          const favoriteButton = document.createElement("BUTTON");
+          favoriteButton.id = detalles[0].title;
+          favoriteButton.classList.add('heartButton');
 
+          // Si el libro está en favoritos, marcar el botón como "liked"
+          if (favoriteTitles.includes(detalles[0].title)) {
+            favoriteButton.classList.add('liked');
+            favoriteButton.innerHTML = '&#9829;'; // Corazón relleno
+          } else {
+            favoriteButton.innerHTML = '&#9825;'; // Corazón vacío
+          }
+
+          enlaceBoton.append(botonComprar);
+          fragment.append(h4Libro, imgLibro, semanasEnLista, description, enlaceBoton, favoriteButton)
+          contenedorLibro.append(fragment);
+          sectionCards.append(contenedorLibro);
+        });
+      })
+      .catch(error => {
+        console.error('Error obteniendo favoritos: ', error);
+      });
+  } else {
+    datos.forEach(({ list_name, rank, weeks_on_list: semanas, book_details: detalles }) => {
+      cleanDOM(sectionTituloLista);
+      const titulo = detalles[0].title;
+      const contenedorLibro = document.createElement("ARTICLE");
+
+      if (addTitle) {
+        const tituloLista = document.createElement("H3");
+        tituloLista.textContent = list_name;
+        sectionTituloLista.append(tituloLista);
+      }
+
+      contenedorLibro.classList = "contenedorLibro";
+      const h4Libro = document.createElement("H4");
+      h4Libro.innerHTML = `#${rank} ${titulo}`;
+
+      const imgLibro = document.createElement("IMG");
+      imgLibro.src = detalles[0].book_image;
+      imgLibro.classList = "contenedor-imagen";
+      imgLibro.alt = "caratula libro";
+
+      const semanasEnLista = document.createElement("P");
+      semanasEnLista.textContent = `Weeks on list: ${semanas}`;
+
+      const description = document.createElement("P");
+      description.textContent = `${detalles[0].description}`;
+
+      const enlaceBoton = document.createElement("A");
+      enlaceBoton.href = `${detalles[0].amazon_product_url}`;
+      enlaceBoton.target = "_blank";
+      const botonComprar = document.createElement("BUTTON");
+      botonComprar.textContent = "BUY AT AMAZON";
+
+      const favoriteButton = document.createElement("BUTTON");
+      favoriteButton.id = detalles[0].title;
+      favoriteButton.innerHTML = '&#9825;'; // Corazón vacío
+      favoriteButton.classList = 'heartButton';
+
+      enlaceBoton.append(botonComprar);
+      fragment.append(h4Libro, imgLibro, semanasEnLista, description, enlaceBoton, favoriteButton)
+      contenedorLibro.append(fragment);
+      sectionCards.append(contenedorLibro);
+    })
+  }
 };
 
 //Función para limpiar el DOM 
@@ -849,6 +970,7 @@ const resetSelects = () => {
 
 //Función para filtrar por categorías actualizadas weekly o monthly
 const filtrarCards = (filtro) => {
+  cleanDOM(sectionBoton);
   let filtroAPintar = [...arrayBack].filter(card => card.updated.toLowerCase() === filtro);
   pintarCards(filtroAPintar);
 };
@@ -865,7 +987,7 @@ const filterAlphabetical = (value) => {
     });
     console.log(alphabeticalFilter)
     cleanDOM(sectionCards);
-    currentPage = 0;
+    cleanDOM(sectionBoton);
     pintarCards(alphabeticalFilter);
   } else if (value === 'zToa') {
     let alphabeticalFilter = [...arrayBack].sort((a, b) => {
@@ -877,7 +999,7 @@ const filterAlphabetical = (value) => {
     });
     console.log(alphabeticalFilter)
     cleanDOM(sectionCards);
-    currentPage = 0;
+    cleanDOM(sectionBoton);
     console.log(arrayBack)
     pintarCards(alphabeticalFilter);
   }
@@ -897,6 +1019,7 @@ const filterByOldest = (value) => {
       } return 0;
     });
     cleanDOM(sectionCards);
+    cleanDOM(sectionBoton);
     pintarCards(oldestFilter);
   } else if (value === 'toOldest') {
     let oldestFilter = [...arrayBack].sort((a, b) => {
@@ -909,6 +1032,7 @@ const filterByOldest = (value) => {
       } return 0;
     });
     cleanDOM(sectionCards);
+    cleanDOM(sectionBoton);
     pintarCards(oldestFilter);
   }
 };
@@ -926,6 +1050,7 @@ const filterByNewest = (value) => {
       } return 0;
     });
     cleanDOM(sectionCards);
+    cleanDOM(sectionBoton);
     pintarCards(newestFilter);
   } else if (value === 'toNewest') {
     let newestFilter = [...arrayBack].sort((a, b) => {
@@ -938,6 +1063,7 @@ const filterByNewest = (value) => {
       } return 0;
     });
     cleanDOM(sectionCards);
+    cleanDOM(sectionBoton);
     pintarCards(newestFilter);
   }
 };
