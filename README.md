@@ -17,3 +17,6 @@ A list of technologies used within the project:
 * [CSS](https://example.com): Version 2.34
 * [Javascript](https://example.com): Version 123
 * [API NY Times](https://example.com): Version 1234
+
+
+<a target="_blank" href="https://icons8.com/icon/LRNHSg8YnQRx/close-window">Close Window</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
