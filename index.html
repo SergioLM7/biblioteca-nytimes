@@ -4,13 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playwrite+NG+Modern:wght@100..400&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="CSS/style.css">
-    <title>La biblioteca del NY Times</title>
+    <title>NY Times' library</title>
 </head>
 
 <body>
     <header>
-        <h2>Los Best Selleres del NY Times</h2>
+        <h2>The NY Times Best Selleres</h2>
     </header>
     <main>
         <section id="spinner" class="spinner">
@@ -24,6 +28,7 @@
 
         <section class="sectionFormUser" id="formRegister">
             <div id="formRegContainer">
+                <button type="button" class="close" id="closeRegister"></button>
                 <form id="formReg" action="#" method="POST">
                     <label for="email">Email:</label><br>
                     <input type="email" id="email" name="email" placeholder="Introduce email..."><br>
@@ -33,21 +38,20 @@
                     <input type="password" id="pass2" name="pass2" placeholder="Repeat password..."><br><br>
                     <button type="submit" value="submit" form="formReg">Register</button>
                 </form>
-                <button type="button" class="close" id="closeRegister">X</button>
             </div>
         </section>
 
         <section class="sectionFormUser" id="formLogIn">
             <div id="formAuthContainer">
+                <button type="button" class="close" id="closeLogIn"></button>
                 <form id="formAuth" action="#" method="POST">
                     <label for="userEmail">Email:</label><br>
                     <input type="email" id="userEmail" name="userEmail" placeholder="Introduce email..."><br>
                     <label for="userPassword">Password:</label><br>
                     <input type="password" id="userPassword" name="userPassword"
                         placeholder="Introduce password..."><br>
-                    <input type="submit" value="Log in" form="formAuth" />
+                    <button type="submit" value="Log in" form="formAuth">Log In</button>
                 </form>
-                <button type="button" class="close" id="closeLogIn">X</button>
             </div>
         </section>
 
@@ -104,12 +108,14 @@
                 <div>
                     <label for="tituloLibro">Find by title:</label>
                     <input type="text" id="tituloLibro" name="tituloLibro" placeholder="Find by title" maxlength="6" />
-                    <button class="buttonTituloFilter" id="botonTituloFilter" name="botonTituloFilter">Find the book</button>
+                    <button class="buttonTituloFilter" id="botonTituloFilter" name="botonTituloFilter">Find the
+                        book</button>
                 </div>
                 <div>
                     <label for="autorLibro">Find by author:</label>
                     <input type="text" id="autorLibro" name="autorLibro" placeholder="Find by author" maxlength="6" />
-                    <button class="buttonAuthorFilter" id="botonAuthorFilter" name="botonAuthorFilter">Find by author</button>
+                    <button class="buttonAuthorFilter" id="botonAuthorFilter" name="botonAuthorFilter">Find by
+                        author</button>
                 </div>
                 <div class="clear-button-container">
                     <button class="clearButton" id="clear" name="clear">Clear</button>
@@ -149,6 +155,7 @@
     </main>
     <footer id="footer">
         <p>made by Sergio L.</p>
+        <a href="https://github.com/SergioLM7" target="_blank"><img src="../images/gato-pulpo.png" alt='logo de Git Hub'/></a>
     </footer>
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
