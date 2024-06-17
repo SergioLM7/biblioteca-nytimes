@@ -16,8 +16,8 @@ This project allows users to search for books (from the NY Times API), filter th
 * HTML5
 * CSS3
 * JavaScript (ES6+)
-* Firebase (Authentication, Firestore & Cloud) ([https://firebase.google.com/])
-* API NY Times ([https://developer.nytimes.com/apis])
+* Firebase (Authentication, Firestore & Cloud) [https://firebase.google.com/]
+* API NY Times [https://developer.nytimes.com/apis]
 * Postman
 * Git & Git Hub
 
@@ -38,8 +38,18 @@ This project allows users to search for books (from the NY Times API), filter th
     - From A to Z and Z to A.
     - By author.
     - By title.
+      
+### In action
+ 
+![Example1](https://github.com/SergioLM7/biblioteca-nytimes/blob/main/images/gif1.gif)
+
 * Users can sign up and log in using the authentication form.
 * Once authenticated, users can view their profile and the books they have marked as favorites.
+  
+### In action
+  
+![Example2](https://github.com/SergioLM7/biblioteca-nytimes/blob/main/images/gif2.gif)
+
 * Users can mark books as favorites by clicking on the heart button.
 * Favorite books are saved in Firestore under the user's document.
 * By clicking on "My Profile," users can view all the books they have marked as favorites.
@@ -88,6 +98,10 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 ```
+## Author
+**Sergio Lillo, Full Stack Student in The Bridge**
+<a href="https://www.linkedin.com/in/lillosergio/" target="_blank"> <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/LinkedIn_icon.svg/1200px-LinkedIn_icon.svg.png" width=30px, height=30px/></a> 
 
-## Contr
+
+## Useful resources
 <a target="_blank" href="https://icons8.com/icon/LRNHSg8YnQRx/close-window">Close Window</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
