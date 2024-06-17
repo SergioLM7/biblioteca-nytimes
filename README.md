@@ -1,22 +1,93 @@
-# APP Library NY Times API
-
-## Table of Contents
-1. [General Info](#general-info)
-2. [Technologies](#technologies)
-3. [Installation](#installation)
-4. [Collaboration](#collaboration)
-5. [FAQs](#faqs)
+# 📚 APP Library NY Times API
+<a href="https://sergiolm7.github.io/biblioteca-nytimes/" target="_blank"> <img src="./images/banner-readme.jpg"/></a> 
 
 
+This project allows users to search for books (from the NY Times API), filter them, and mark their favorites using Firebase as the backend for authentication, data and cloud storage. Favorite books are displayed in the user's profile section beside his/her profile picture. It also gives the chance to go directly to Amazon to buy your favorites books. The application is responsive, mobile first and designed to work well on both mobile and desktop devices.
 
+## Features
+* Search and filter NY Times best seller's categories.
+* Search and filter NY Times best seller's books.
+* User authentication with Firebase.
+* Mark books as favorites.
+* View favorite books in the profile section.
+* Responsive design.
 
-## Technologies
-***
-A list of technologies used within the project:
-* [HTML](https://example.com): Version 12.3 
-* [CSS](https://example.com): Version 2.34
-* [Javascript](https://example.com): Version 123
-* [API NY Times](https://example.com): Version 1234
+## Technologies used
+* HTML5
+* CSS3
+* JavaScript (ES6+)
+* Firebase (Authentication, Firestore & Cloud) ([https://firebase.google.com/])
+* API NY Times ([https://developer.nytimes.com/apis])
+* Postman
+* Git & Git Hub
 
+## Project structure
+* index.html: Main file of the user interface.
+* style.css: CSS styles for the application.
+* script.js: Main logic of the application and Firebase configuration.
 
+## Usage
+
+* You do not need to register for searching and filtering categories and books.
+* The filter section allows searching for categories by:
+    - From A to Z and Z to A (title or author)
+    - By newest/oldest.
+    - By category name (multiple).
+    - By update.
+* The filter section allows searching for books by:
+    - From A to Z and Z to A.
+    - By author.
+    - By title.
+* Users can sign up and log in using the authentication form.
+* Once authenticated, users can view their profile and the books they have marked as favorites.
+* Users can mark books as favorites by clicking on the heart button.
+* Favorite books are saved in Firestore under the user's document.
+* By clicking on "My Profile," users can view all the books they have marked as favorites.
+* Favorite books are displayed with a filled heart button when user is login.
+
+## Access
+You can see the web working here: ([https://sergiolm7.github.io/biblioteca-nytimes/])
+
+## Setup
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/your-username/your-repository.git
+cd your-repository
+```
+
+2. Install dependencies:
+
+```
+npm install -g firebase-tools
+```
+
+3. Make sure to have firebase installed. If not, install it globally:
+
+```bash
+npm install -g firebase-tools
+```
+
+4. Configure Firebase:
+
+* Go to Firebase Console.
+* Create a new project.
+* Set up Firestore and Authentication (Email/Password).
+* Copy the Firebase configuration and paste it into firebase-config.js.
+
+```javascript
+// firebase-config.js
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+```
+
+## Contr
 <a target="_blank" href="https://icons8.com/icon/LRNHSg8YnQRx/close-window">Close Window</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
