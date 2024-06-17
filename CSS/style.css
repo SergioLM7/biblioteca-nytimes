@@ -82,7 +82,9 @@ header img {
 
 header h2 {
     margin: 1rem 0;
-    font-family: 'nytimesStyle';
+    padding-right: 10px;
+    font-family: "Kaushan Script", cursive;
+    font-style:normal;
     font-size: 2rem;
     background-color: white;
     border-radius: 10px;
