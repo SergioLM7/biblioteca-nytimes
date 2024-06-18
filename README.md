@@ -40,19 +40,25 @@ This project allows users to search for books (from the NY Times API), filter th
     - By title.
       
 ### In action
- 
 ![Example1](https://github.com/SergioLM7/biblioteca-nytimes/blob/main/images/gif1.gif)
 
 * Users can sign up and log in using the authentication form.
 * Once authenticated, users can view their profile and the books they have marked as favorites.
   
 ### In action
-  
 ![Example2](https://github.com/SergioLM7/biblioteca-nytimes/blob/main/images/gif2.gif)
 
 * Users can mark books as favorites by clicking on the heart button.
+
+### In action
+![Example3](https://github.com/SergioLM7/biblioteca-nytimes/blob/main/images/gif3.gif)
+
 * Favorite books are saved in Firestore under the user's document.
 * By clicking on "My Profile," users can view all the books they have marked as favorites.
+
+### In action
+![Example4](https://github.com/SergioLM7/biblioteca-nytimes/blob/main/images/gif4.gif)
+
 * Favorite books are displayed with a filled heart button when user is login.
 
 ## Access
