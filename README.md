@@ -104,4 +104,6 @@ firebase.initializeApp(firebaseConfig);
 
 
 ## Useful resources
+Fontawesome: https://fontawesome.com
+<br>
 <a target="_blank" href="https://icons8.com/icon/LRNHSg8YnQRx/close-window">Close Window</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
