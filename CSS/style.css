@@ -574,13 +574,6 @@ label, select, input, button {
     font-style: normal;
 }
 
-#footer img {
-    width: 40px;
-    background-color: white;
-    border-radius: 16px;
-    margin-left: 20px;
-}
-
 
 /* Responsive adjustments */
 @media (min-width: 600px) {
