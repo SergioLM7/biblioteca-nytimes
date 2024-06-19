@@ -26,6 +26,9 @@ This project allows users to search for books (from the NY Times API), filter th
 * style.css: CSS styles for the application.
 * script.js: Main logic of the application and Firebase configuration.
 
+## Access
+You can see the web working here: https://sergiolm7.github.io/biblioteca-nytimes
+
 ## Usage
 
 * You do not need to register for searching and filtering categories and books.
@@ -60,9 +63,6 @@ This project allows users to search for books (from the NY Times API), filter th
 ![Example4](https://github.com/SergioLM7/biblioteca-nytimes/blob/main/images/gif4.gif)
 
 * Favorite books are displayed with a filled heart button when user is login.
-
-## Access
-You can see the web working here: ([https://sergiolm7.github.io/biblioteca-nytimes/])
 
 ## Setup
 
